@@ -55,6 +55,9 @@ The workflow performs comprehensive validation checks:
 #### TypeScript Compilation
 - Runs TypeScript compiler in no-emit mode (`tsc --noEmit`)
 - Reports any compilation errors without blocking the workflow
+- **Note**: TypeScript errors are treated as warnings by default
+  - This allows the workflow to continue even with type errors
+  - To make TypeScript errors blocking, modify the script (see inline comments)
 
 #### Git Repository Status
 - Checks for uncommitted changes

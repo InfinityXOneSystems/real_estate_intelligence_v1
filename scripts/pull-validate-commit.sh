@@ -206,7 +206,10 @@ if [ -f "$PROJECT_ROOT/tsconfig.json" ]; then
         log "SUCCESS" "✓ TypeScript compilation check passed"
     else
         log "WARN" "⚠ TypeScript has compilation errors (exit code: $TSC_EXIT_CODE)"
-        # Don't fail validation for TS errors, just warn
+        # TypeScript errors are treated as warnings, not failures
+        # This allows the workflow to continue even with type errors
+        # Adjust this behavior by uncommenting the line below if TS errors should block:
+        # VALIDATION_PASSED=false
     fi
 fi
 
