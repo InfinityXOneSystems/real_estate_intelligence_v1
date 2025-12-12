@@ -3,20 +3,20 @@
 # Install system dependencies
 RUN apt-get update && apt-get install -y curl ca-certificates && rm -rf /var/lib/apt/lists/*
 
-# Create app directory
+# Create app directory and set ownership
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
+COPY --chown=node:node package*.json ./
 
-# Install ALL dependencies (not just production)
+# Install ALL dependencies
 RUN npm ci --legacy-peer-deps
 
 # Copy production server
-COPY server-production.js ./server.js
+COPY --chown=node:node server-production.js ./server.js
 
-# Create credentials directory
-RUN mkdir -p /app/credentials
+# Create credentials directory with proper ownership
+RUN mkdir -p /app/credentials && chown -R node:node /app
 
 # Set environment variables
 ENV NODE_ENV=production
