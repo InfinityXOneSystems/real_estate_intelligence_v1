@@ -188,7 +188,10 @@ else
     if [ $NPM_EXIT_CODE -eq 0 ]; then
         log "SUCCESS" "✓ Dependencies installed successfully"
     else
+        # Note: npm can exit with code 1 for optional dependency failures (e.g., Puppeteer)
+        # while still successfully installing core dependencies
         log "ERROR" "✗ Failed to install dependencies (exit code: $NPM_EXIT_CODE)"
+        log "WARN" "Check log file for details: $LOG_FILE"
         VALIDATION_PASSED=false
     fi
 fi
