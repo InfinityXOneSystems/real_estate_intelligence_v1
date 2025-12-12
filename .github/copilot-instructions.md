@@ -122,7 +122,7 @@ npm run autonomous:heal
 ├── scripts/                    # Utility scripts (PowerShell, TS)
 ├── .github/
 │   ├── workflows/             # GitHub Actions (CI/CD, cron jobs)
-│   ├── instructions/          # Additional instruction files (e.g., snyk_rules)
+│   ├── instructions/          # Additional instruction files (e.g., snyk_rules.instructions.md)
 │   └── copilot-instructions.md # Copilot coding agent instructions
 ├── config/                     # External configuration
 ├── data/                       # Data files
@@ -240,7 +240,7 @@ Required API keys (see `.env.template` for full list):
 
 - The system is designed for autonomous 24/7 operation
 - GitHub Actions workflows handle scheduled runs
-- Output syncs to Google Sheets (ID: `1u1USJDfPR5qZSb6-Zs4JyIyDFLLLfZhHKr1KJcFKrgU`)
+- Output syncs to a configured Google Sheets document (see environment configuration)
 - Smart contracts deploy to Sepolia testnet
 - Dashboard serves on port 4000
 
