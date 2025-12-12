@@ -316,4 +316,5 @@ if (require.main === module) {
   });
 }
 
+export { RealEstateOrchestrator };
 export default RealEstateOrchestrator;
