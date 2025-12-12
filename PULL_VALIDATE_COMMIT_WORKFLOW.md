@@ -99,10 +99,11 @@ The log file contains:
 
 ## Exit Codes
 
-- **0**: Workflow completed successfully (even with warnings)
-- **1**: Critical error occurred (rare, only for severe failures)
+- **0**: Workflow completed successfully with all validations passed
+- **1**: Critical error occurred (e.g., git fetch failure)
+- **2**: Workflow completed but some validations had warnings/errors
 
-Note: The workflow is designed to be resilient and will complete even if some non-critical validations fail.
+Exit code 2 allows CI/CD systems to distinguish between complete success and success with warnings, enabling appropriate handling based on the context.
 
 ---
 

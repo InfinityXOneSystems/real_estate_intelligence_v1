@@ -8,6 +8,7 @@
 # ============================================================================
 
 set -e  # Exit on error
+set -o pipefail  # Catch errors in pipelines
 
 # Configuration
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -30,8 +31,9 @@ mkdir -p "$LOG_DIR"
 log() {
     local level=$1
     shift
-    local message="$@"
-    local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+    local message="$*"
+    local timestamp
+    timestamp=$(date +"%Y-%m-%d %H:%M:%S")
     local log_entry="[$timestamp] [$level] $message"
     
     echo "$log_entry" >> "$LOG_FILE"
@@ -80,10 +82,15 @@ log "INFO" "Current branch: $CURRENT_BRANCH"
 
 # Fetch all updates
 log "INFO" "Fetching from origin..."
-if git fetch origin 2>&1 | tee -a "$LOG_FILE"; then
+set +e  # Temporarily disable exit on error
+git fetch origin >> "$LOG_FILE" 2>&1
+FETCH_EXIT_CODE=$?
+set -e  # Re-enable exit on error
+
+if [ $FETCH_EXIT_CODE -eq 0 ]; then
     log "SUCCESS" "Fetch completed successfully"
 else
-    log "ERROR" "Fetch failed"
+    log "ERROR" "Fetch failed (exit code: $FETCH_EXIT_CODE)"
     exit 1
 fi
 
@@ -166,15 +173,22 @@ fi
 # Validation 5: Dependencies check
 log "INFO" "Checking dependencies..."
 if [ -d "$PROJECT_ROOT/node_modules" ]; then
-    MODULE_COUNT=$(ls -1 "$PROJECT_ROOT/node_modules" | wc -l)
+    MODULE_COUNT=$(find "$PROJECT_ROOT/node_modules" -maxdepth 1 -type d | wc -l)
     log "SUCCESS" "✓ node_modules exists with $MODULE_COUNT packages"
 else
     log "WARN" "⚠ node_modules directory not found"
     log "INFO" "Installing dependencies..."
-    if npm install 2>&1 | tee -a "$LOG_FILE"; then
+    
+    # Capture npm install exit code separately
+    set +e  # Temporarily disable exit on error
+    npm install >> "$LOG_FILE" 2>&1
+    NPM_EXIT_CODE=$?
+    set -e  # Re-enable exit on error
+    
+    if [ $NPM_EXIT_CODE -eq 0 ]; then
         log "SUCCESS" "✓ Dependencies installed successfully"
     else
-        log "ERROR" "✗ Failed to install dependencies"
+        log "ERROR" "✗ Failed to install dependencies (exit code: $NPM_EXIT_CODE)"
         VALIDATION_PASSED=false
     fi
 fi
@@ -182,10 +196,17 @@ fi
 # Validation 6: TypeScript compilation check (if applicable)
 log "INFO" "Checking TypeScript compilation..."
 if [ -f "$PROJECT_ROOT/tsconfig.json" ]; then
-    if npx tsc --noEmit 2>&1 | tee -a "$LOG_FILE"; then
+    # Capture tsc exit code separately
+    set +e  # Temporarily disable exit on error
+    npx tsc --noEmit >> "$LOG_FILE" 2>&1
+    TSC_EXIT_CODE=$?
+    set -e  # Re-enable exit on error
+    
+    if [ $TSC_EXIT_CODE -eq 0 ]; then
         log "SUCCESS" "✓ TypeScript compilation check passed"
     else
-        log "WARN" "⚠ TypeScript has compilation errors"
+        log "WARN" "⚠ TypeScript has compilation errors (exit code: $TSC_EXIT_CODE)"
+        # Don't fail validation for TS errors, just warn
     fi
 fi
 
@@ -260,5 +281,5 @@ if [ "$VALIDATION_PASSED" = true ]; then
     exit 0
 else
     echo -e "${YELLOW}⚠ Some validations failed or had warnings${NC}"
-    exit 0  # Still exit 0 since we want to continue
+    exit 2  # Exit code 2 indicates success with warnings
 fi
