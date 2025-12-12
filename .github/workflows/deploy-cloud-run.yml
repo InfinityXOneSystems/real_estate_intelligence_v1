@@ -1,0 +1,66 @@
+name: Deploy to Google Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Manual trigger
+
+env:
+  PROJECT_ID: infinity-x-one-systems
+  REGION: us-east1
+  SERVICE_NAME: real-estate-intelligence
+
+jobs:
+  deploy:
+    name: Deploy to Cloud Run
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      - name: Build and Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --source . \
+            --region ${{ env.REGION }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --port 8080 \
+            --memory 4Gi \
+            --cpu 2 \
+            --min-instances 1 \
+            --max-instances 10 \
+            --timeout 300 \
+            --set-env-vars NODE_ENV=production,GCS_BUCKET_NAME=real-estate-intelligence,GOOGLE_SHEETS_ID=1G4ACS7NJRBcE8XyhU4V2un5xPIm_b90fPi2Rt4iMs4k \
+            --quiet
+
+      - name: Show deployment URL
+        run: |
+          SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} \
+            --region ${{ env.REGION }} \
+            --format 'value(status.url)')
+          echo "🚀 Deployment successful!"
+          echo "Service URL: $SERVICE_URL"
+          echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV
+
+      - name: Test deployment
+        run: |
+          echo "Testing health endpoint..."
+          curl -f ${{ env.SERVICE_URL }}/health || exit 1
+          echo "✅ Health check passed!"

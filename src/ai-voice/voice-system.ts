@@ -4,10 +4,10 @@
  * Using ElevenLabs for voice synthesis and Google Speech-to-Text for recognition
  */
 
-import { ElevenLabsClient } from "elevenlabs-node";
+import { ElevenLabs } from "elevenlabs";
 import { SpeechClient } from '@google-cloud/speech';
 import { TextToSpeechClient } from '@google-cloud/text-to-speech';
-import * as twilio from 'twilio';
+import twilio from 'twilio';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -44,7 +44,7 @@ interface AppointmentRequest {
 }
 
 export class AIVoiceSystem {
-  private elevenLabs: ElevenLabsClient;
+  private elevenLabs: ElevenLabs;
   private speechClient: SpeechClient;
   private ttsClient: TextToSpeechClient;
   private twilioClient: twilio.Twilio;
@@ -53,7 +53,7 @@ export class AIVoiceSystem {
 
   constructor() {
     // Initialize ElevenLabs with Sol-quality voice
-    this.elevenLabs = new ElevenLabsClient({
+    this.elevenLabs = new ElevenLabs({
       apiKey: process.env.ELEVENLABS_API_KEY || '',
     });
 
@@ -136,7 +136,7 @@ export class AIVoiceSystem {
     this.activeSessions.set(callSid, session);
 
     // Initial greeting
-    const greeting = await this.generateResponse(
+    await this.generateResponse(
       "Hello! This is the Real Estate Intelligence system. How can I help you today?",
       session
     );

@@ -174,7 +174,7 @@ async function analyzeRuntime(): Promise<ModuleResult> {
     const envStatus = {
       name: "Environment Variables",
       configured: 0,
-      missing: [],
+      missing: [] as string[],
       status: "OK",
     };
 
@@ -323,7 +323,7 @@ async function checkCodeQuality(): Promise<ModuleResult> {
 
     // Check TypeScript compilation
     try {
-      const { stdout, stderr } = await execAsync(
+      await execAsync(
         "npm run typecheck -- --noEmit",
         { cwd: PROJECT_ROOT }
       );

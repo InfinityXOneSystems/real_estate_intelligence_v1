@@ -83,7 +83,7 @@ const logger = winston.createLogger({
  * Runs: Analysis, Diagnosis, Fixing, Healing, Optimization
  */
 function scheduleFullCycle(): void {
-  const task = cron.schedule(SCHEDULE_CONFIG.fullCycle, async () => {
+  cron.schedule(SCHEDULE_CONFIG.fullCycle, async () => {
     logger.info("🔄 Starting scheduled FULL CYCLE...");
     try {
       await runFullCycle();
@@ -101,7 +101,7 @@ function scheduleFullCycle(): void {
  * Quick validation of critical systems
  */
 function scheduleHealthCheck(): void {
-  const task = cron.schedule(SCHEDULE_CONFIG.healthCheck, async () => {
+  cron.schedule(SCHEDULE_CONFIG.healthCheck, async () => {
     logger.info("🏥 Starting scheduled HEALTH CHECK...");
     try {
       // Quick health checks
@@ -122,7 +122,7 @@ function scheduleHealthCheck(): void {
  * Check for vulnerable or outdated packages
  */
 function scheduleDependencyAudit(): void {
-  const task = cron.schedule(SCHEDULE_CONFIG.dependencyAudit, async () => {
+  cron.schedule(SCHEDULE_CONFIG.dependencyAudit, async () => {
     logger.info("📦 Starting scheduled DEPENDENCY AUDIT...");
     try {
       logger.info("Checking for security vulnerabilities...");
@@ -145,7 +145,7 @@ function scheduleDependencyAudit(): void {
  * TypeScript, ESLint, and code metrics
  */
 function scheduleCodeQualityAnalysis(): void {
-  const task = cron.schedule(SCHEDULE_CONFIG.codeQuality, async () => {
+  cron.schedule(SCHEDULE_CONFIG.codeQuality, async () => {
     logger.info("🔍 Starting scheduled CODE QUALITY ANALYSIS...");
     try {
       logger.info("Running TypeScript type checking...");
@@ -166,7 +166,7 @@ function scheduleCodeQualityAnalysis(): void {
  * Build size analysis, memory profiling, cache optimization
  */
 function schedulePerformanceOptimization(): void {
-  const task = cron.schedule(SCHEDULE_CONFIG.performanceAnalysis, async () => {
+  cron.schedule(SCHEDULE_CONFIG.performanceAnalysis, async () => {
     logger.info(
       "⚡ Starting scheduled PERFORMANCE OPTIMIZATION ANALYSIS..."
     );
@@ -192,7 +192,7 @@ function schedulePerformanceOptimization(): void {
  * Remove old logs and temporary files
  */
 function scheduleLogCleanup(): void {
-  const task = cron.schedule(SCHEDULE_CONFIG.logCleanup, async () => {
+  cron.schedule(SCHEDULE_CONFIG.logCleanup, async () => {
     logger.info("🧹 Starting scheduled LOG CLEANUP...");
     try {
       const files = fs.readdirSync(LOG_DIR);
