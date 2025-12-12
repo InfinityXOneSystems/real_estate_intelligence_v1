@@ -315,6 +315,22 @@ npm run cron:manual
 ts-node src/orchestrator.ts
 ```
 
+### **Pull-Validate-Commit Workflow**
+
+Automated workflow to pull updates, validate system state, and auto-commit changes:
+
+```bash
+# Run the workflow
+npm run workflow:pull-validate-commit
+```
+
+**What it does**:
+1. Pulls latest updates from main branch
+2. Validates project structure, dependencies, and TypeScript compilation
+3. Auto-commits changes with detailed logging
+
+See [PULL_VALIDATE_COMMIT_WORKFLOW.md](./PULL_VALIDATE_COMMIT_WORKFLOW.md) for full documentation.
+
 ---
 
 ## 🗄️ **Data Storage**
