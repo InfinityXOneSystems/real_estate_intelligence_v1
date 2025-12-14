@@ -1,0 +1,10 @@
+Tier1:
+  - "src/**"
+Tier2:
+  - "tests/**"
+Tier3:
+  - "docs/system/**"
+Tier4:
+  - ".github/workflows/**"
+  - "package.json"
+  - "package-lock.json"
