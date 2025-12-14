@@ -1,0 +1,61 @@
+name: Infinity Prime - Labeler
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited, labeled]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply labels based on changed files
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) return;
+            // skip external PRs
+            if (pr.head.repo.full_name !== `${context.repo.owner}/${context.repo.repo}`) {
+              console.log('External PR; skipping');
+              return;
+            }
+            const files = await github.paginate(github.rest.pulls.listFiles, { owner: context.repo.owner, repo: context.repo.repo, pull_number: pr.number });
+            const paths = files.map(f => f.filename);
+            // load PROTECTED_PATHS.yaml
+            let prot = {};
+            try {
+              const res = await github.rest.repos.getContent({ owner: context.repo.owner, repo: context.repo.repo, path: 'docs/system/PROTECTED_PATHS.yaml', ref: pr.base.ref });
+              const content = Buffer.from(res.data.content, 'base64').toString();
+              const lines = content.split('\n').map(l => l.trim());
+              let current = null;
+              for (const l of lines) {
+                const m = l.match(/^Tier(\d):/);
+                if (m) current = 'Tier' + m[1];
+                const m2 = l.match(/^-\s+"(.+)"/);
+                if (m2 && current) prot[m2[1]] = current;
+              }
+            } catch (e) {
+              console.log('Could not load PROTECTED_PATHS.yaml:', e.message);
+            }
+            console.log('Changed files:', paths.join(', '));
+            let highest = 1;
+            for (const f of paths) {
+              for (const pattern in prot) {
+                if (pattern.endsWith('/**')) {
+                  const prefix = pattern.replace('/**','');
+                  if (f.startsWith(prefix)) highest = Math.max(highest, parseInt(prot[pattern].replace('Tier','')) || 1);
+                } else if (f === pattern) {
+                  highest = Math.max(highest, parseInt(prot[pattern].replace('Tier','')) || 1);
+                }
+              }
+            }
+            const labels = ['infinity-prime', `tier-${highest}`];
+            if (highest >= 3) labels.push('blocked-approval-required');
+            console.log('Adding labels:', labels.join(', '));
+            await github.rest.issues.addLabels({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr.number, labels });
+            await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr.number, body: `Infinity Prime: applied labels ${labels.join(', ')}` });
