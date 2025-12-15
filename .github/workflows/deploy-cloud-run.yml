@@ -47,6 +47,7 @@ jobs:
             --min-instances 1 \
             --max-instances 10 \
             --timeout 300 \
+            --service-account=real-estate-intelligence@infinity-x-one-systems.iam.gserviceaccount.com \
             --set-env-vars NODE_ENV=production,GCS_BUCKET_NAME=real-estate-intelligence,GOOGLE_SHEETS_ID=1G4ACS7NJRBcE8XyhU4V2un5xPIm_b90fPi2Rt4iMs4k \
             --quiet
 

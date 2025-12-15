@@ -2,13 +2,16 @@ name: Real Estate Intelligence - Autonomous Cron
 
 on:
   schedule:
-    # Run 4 times daily at optimal times (ET timezone)
-    - cron: '0 10 * * *'  # 6 AM ET (10:00 UTC)
-    - cron: '0 16 * * *'  # 12 PM ET (16:00 UTC)
-    - cron: '0 22 * * *'  # 6 PM ET (22:00 UTC)
-    - cron: '0 3 * * *'   # 11 PM ET (03:00 UTC next day)
+    # TEST MODE: Run every 15 minutes for immediate testing
+    - cron: '*/15 * * * *'  # Every 15 minutes
+    
+    # PRODUCTION SCHEDULE (commented out during testing):
+    # - cron: '0 10 * * *'  # 6 AM ET (10:00 UTC)
+    # - cron: '0 16 * * *'  # 12 PM ET (16:00 UTC)
+    # - cron: '0 22 * * *'  # 6 PM ET (22:00 UTC)
+    # - cron: '0 3 * * *'   # 11 PM ET (03:00 UTC next day)
 
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch: # Allow manual trigger (can also trigger immediately)
 
 env:
   NODE_VERSION: '20'
