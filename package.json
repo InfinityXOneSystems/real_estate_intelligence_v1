@@ -55,14 +55,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.3",
     "@google-cloud/bigquery": "^7.9.0",
-<<<<<<< HEAD
-    "@google-cloud/storage": "^7.13.0",
-    "@google-cloud/vertexai": "^1.9.0",
-    "@google-cloud/vision": "^4.3.2",
-=======
->>>>>>> d202625bac581d0a6e0c559ef449a9fdaf606830
     "@google-cloud/documentai": "^8.9.0",
-    "firebase-admin": "^12.7.0",
     "@google-cloud/pubsub": "^4.8.0",
     "@google-cloud/speech": "^6.7.0",
     "@google-cloud/storage": "^7.13.0",
@@ -87,32 +80,14 @@
     "pg": "^8.13.1",
     "puppeteer": "^23.10.4",
     "stripe": "^17.3.1",
-<<<<<<< HEAD
-    "elevenlabs": "^0.9.0",
-=======
->>>>>>> d202625bac581d0a6e0c559ef449a9fdaf606830
     "twilio": "^5.3.5",
-<<<<<<< HEAD
-    "@sendgrid/mail": "^8.1.4",
-    "puppeteer": "^23.10.4",
-    "cheerio": "^1.0.0",
-    "axios": "^1.7.9",
-    "express": "^4.21.1",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-=======
->>>>>>> d202625bac581d0a6e0c559ef449a9fdaf606830
     "winston": "^3.17.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@types/express": "^5.0.0",
-<<<<<<< HEAD
     "@types/cors": "^2.8.17",
-    "@types/node-cron": "^3.0.11",
-=======
->>>>>>> d202625bac581d0a6e0c559ef449a9fdaf606830
+    "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.1",
     "@types/node-cron": "^3.0.11",
