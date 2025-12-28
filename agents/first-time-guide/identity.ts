@@ -55,7 +55,7 @@ export interface FirstTimeGuideIdentity {
     document_organization: 0.97;
 
     // Communication
-    simplification: 0.99; // Complex → simple
+    simplification: 0.99; // Complex â†’ simple
     analogies: 0.97; // Relatable examples
     visual_aids: 0.96;
     follow_up: 0.98;

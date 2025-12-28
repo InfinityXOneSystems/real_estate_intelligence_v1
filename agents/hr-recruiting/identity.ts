@@ -2,7 +2,7 @@ import { EventEmitter } from "events";
 
 /**
  * HR Recruiting - Talent Acquisition & Candidate Pipeline Specialist
- * Screens résumés, schedules interviews, drafts job descriptions,
+ * Screens rÃ©sumÃ©s, schedules interviews, drafts job descriptions,
  * and manages end-to-end recruiting operations.
  */
 

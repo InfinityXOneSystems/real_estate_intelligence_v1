@@ -1,9 +1,9 @@
 /**
  * Credential Synchronization Utility
- * 
+ *
  * Syncs credentials from foundation repo to Real Estate Intelligence
  * Supports both GitHub Secrets and local .env synchronization
- * 
+ *
  * @author JARVIS
  * @version 1.0.0
  */
@@ -95,7 +95,10 @@ export class CredentialSyncManager {
     });
 
     // Check Foundation .env.local
-    const foundationEnvLocalPath = path.join(this.foundationRepoPath, '.env.local');
+    const foundationEnvLocalPath = path.join(
+      this.foundationRepoPath,
+      '.env.local'
+    );
     sources.push({
       type: 'local-env',
       location: foundationEnvLocalPath,
@@ -253,7 +256,10 @@ export class CredentialSyncManager {
     const filteredEnv = { ...mergedEnv };
 
     excludedKeys.forEach((key) => {
-      if (mergedEnv[key] === undefined || mergedEnv[key]?.includes('placeholder')) {
+      if (
+        mergedEnv[key] === undefined ||
+        mergedEnv[key]?.includes('placeholder')
+      ) {
         delete filteredEnv[key];
       }
     });
@@ -287,14 +293,20 @@ export class CredentialSyncManager {
       const ghAvailable = this.isGitHubCLIAvailable();
 
       if (!ghAvailable) {
-        result.warnings.push('GitHub CLI not available. Cannot sync to GitHub Secrets.');
+        result.warnings.push(
+          'GitHub CLI not available. Cannot sync to GitHub Secrets.'
+        );
         logger.warn('GitHub CLI not available');
         return;
       }
 
       // Sync each credential
       for (const [key, value] of Object.entries(credentials)) {
-        if (!value || value.includes('YOUR_') || value.includes('placeholder')) {
+        if (
+          !value ||
+          value.includes('YOUR_') ||
+          value.includes('placeholder')
+        ) {
           continue;
         }
 
@@ -309,7 +321,9 @@ export class CredentialSyncManager {
           logger.info('GitHub Secret synced', { key });
         } catch (error) {
           result.failureCount++;
-          result.errors.push(`Failed to sync ${key}: ${(error as Error).message}`);
+          result.errors.push(
+            `Failed to sync ${key}: ${(error as Error).message}`
+          );
           logger.warn('Failed to sync GitHub Secret', { key, error });
         }
       }

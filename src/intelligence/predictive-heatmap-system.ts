@@ -21,12 +21,16 @@ export interface HeatmapPoint {
     agreement: number; // 0-100, confidence level
     sources: string[];
   };
-  recommendation: "high_priority" | "medium_priority" | "low_priority" | "monitor";
+  recommendation:
+    | 'high_priority'
+    | 'medium_priority'
+    | 'low_priority'
+    | 'monitor';
 }
 
 export interface HeatmapLayer {
   name: string;
-  type: "foreclosure" | "divorce" | "economic" | "crime" | "composite";
+  type: 'foreclosure' | 'divorce' | 'economic' | 'crime' | 'composite';
   dataPoints: HeatmapPoint[];
   timestamp: string;
   refresh_interval: number; // hours
@@ -118,7 +122,7 @@ export class PredictiveHeatmapSystem {
    * Create heatmap layer for a specific factor
    */
   createHeatmapLayer(
-    layerType: "foreclosure" | "divorce" | "economic" | "crime" | "composite",
+    layerType: 'foreclosure' | 'divorce' | 'economic' | 'crime' | 'composite',
     markets: Array<{
       city: string;
       zipCodes: string[];
@@ -134,30 +138,48 @@ export class PredictiveHeatmapSystem {
         let intensity = 0;
 
         switch (layerType) {
-          case "foreclosure":
-            intensity = Math.min((market.factors.foreclosureRate / 0.05) * 100, 100);
+          case 'foreclosure':
+            intensity = Math.min(
+              (market.factors.foreclosureRate / 0.05) * 100,
+              100
+            );
             break;
 
-          case "divorce":
-            intensity = Math.min((market.factors.divorceRate / 0.005) * 100, 100);
+          case 'divorce':
+            intensity = Math.min(
+              (market.factors.divorceRate / 0.005) * 100,
+              100
+            );
             break;
 
-          case "economic":
+          case 'economic':
             intensity =
-              Math.min((market.factors.unemploymentRate / 0.08) * 100, 100) * 0.6 +
-              Math.min((market.factors.propertyTaxDelinquency / 0.04) * 100, 100) * 0.4;
+              Math.min((market.factors.unemploymentRate / 0.08) * 100, 100) *
+                0.6 +
+              Math.min(
+                (market.factors.propertyTaxDelinquency / 0.04) * 100,
+                100
+              ) *
+                0.4;
             break;
 
-          case "crime":
+          case 'crime':
             intensity = Math.min((market.factors.crimeRate / 0.08) * 100, 100);
             break;
 
-          case "composite":
-            intensity = this.calculateHeatmapIntensity(zipCode, market.city, market.factors);
+          case 'composite':
+            intensity = this.calculateHeatmapIntensity(
+              zipCode,
+              market.city,
+              market.factors
+            );
             break;
         }
 
-        const forecast = this.forecastActivity(market.factors.foreclosureRate, 50);
+        const forecast = this.forecastActivity(
+          market.factors.foreclosureRate,
+          50
+        );
 
         const point: HeatmapPoint = {
           zipCode,
@@ -178,13 +200,17 @@ export class PredictiveHeatmapSystem {
           },
           consensus: {
             agreement: this.calculateConsensusScore(
-              ["mls", "tax_records", "court_records", "economic_data"],
+              ['mls', 'tax_records', 'court_records', 'economic_data'],
               3
             ),
-            sources: ["mls", "tax_records", "court_records"],
+            sources: ['mls', 'tax_records', 'court_records'],
           },
           recommendation:
-            intensity >= 75 ? "high_priority" : intensity >= 50 ? "medium_priority" : "low_priority",
+            intensity >= 75
+              ? 'high_priority'
+              : intensity >= 50
+                ? 'medium_priority'
+                : 'low_priority',
         };
 
         dataPoints.push(point);
@@ -217,7 +243,10 @@ export class PredictiveHeatmapSystem {
     const unique = new Map<string, HeatmapPoint>();
     for (const point of allPoints) {
       const key = `${point.zipCode}_${point.city}`;
-      if (!unique.has(key) || point.intensity > (unique.get(key)?.intensity || 0)) {
+      if (
+        !unique.has(key) ||
+        point.intensity > (unique.get(key)?.intensity || 0)
+      ) {
         unique.set(key, point);
       }
     }
@@ -234,33 +263,39 @@ export class PredictiveHeatmapSystem {
     const recommendations: string[] = [];
 
     if (heatmapPoint.intensity >= 80) {
-      recommendations.push("🔴 CRITICAL: Very high distressed property concentration");
-      recommendations.push("  → Deploy max marketing resources");
-      recommendations.push("  → Increase outreach frequency");
-      recommendations.push("  → Consider direct mail campaign");
+      recommendations.push(
+        'ðŸ”´ CRITICAL: Very high distressed property concentration'
+      );
+      recommendations.push('  â†’ Deploy max marketing resources');
+      recommendations.push('  â†’ Increase outreach frequency');
+      recommendations.push('  â†’ Consider direct mail campaign');
     } else if (heatmapPoint.intensity >= 60) {
-      recommendations.push("🟡 HIGH: Significant distress indicators");
-      recommendations.push("  → Standard outreach + targeted ads");
-      recommendations.push("  → Monitor weekly for new leads");
+      recommendations.push('ðŸŸ¡ HIGH: Significant distress indicators');
+      recommendations.push('  â†’ Standard outreach + targeted ads');
+      recommendations.push('  â†’ Monitor weekly for new leads');
     } else if (heatmapPoint.intensity >= 40) {
-      recommendations.push("🟢 MEDIUM: Moderate opportunity");
-      recommendations.push("  → Standard outreach");
-      recommendations.push("  → Monitor monthly");
+      recommendations.push('ðŸŸ¢ MEDIUM: Moderate opportunity');
+      recommendations.push('  â†’ Standard outreach');
+      recommendations.push('  â†’ Monitor monthly');
     } else {
-      recommendations.push("⚪ LOW: Limited opportunity");
-      recommendations.push("  → Background monitoring only");
+      recommendations.push('âšª LOW: Limited opportunity');
+      recommendations.push('  â†’ Background monitoring only');
     }
 
     if (heatmapPoint.distressFactors.divorce > 0.004) {
-      recommendations.push("  → Family law attorney co-marketing opportunity");
+      recommendations.push(
+        '  â†’ Family law attorney co-marketing opportunity'
+      );
     }
 
     if (heatmapPoint.distressFactors.unemployment > 0.06) {
-      recommendations.push("  → Career counseling partnership potential");
+      recommendations.push('  â†’ Career counseling partnership potential');
     }
 
     if (heatmapPoint.forecastedActivity.expectedForeclosures > 10) {
-      recommendations.push(`  → Expect ~${heatmapPoint.forecastedActivity.expectedForeclosures} foreclosures in 90 days`);
+      recommendations.push(
+        `  â†’ Expect ~${heatmapPoint.forecastedActivity.expectedForeclosures} foreclosures in 90 days`
+      );
     }
 
     return recommendations;
@@ -275,9 +310,9 @@ export class PredictiveHeatmapSystem {
     for (const layer of this.heatmaps.values()) {
       for (const point of layer.dataPoints) {
         features.push({
-          type: "Feature",
+          type: 'Feature',
           geometry: {
-            type: "Point",
+            type: 'Point',
             coordinates: [point.lng, point.lat],
           },
           properties: {
@@ -293,7 +328,7 @@ export class PredictiveHeatmapSystem {
     }
 
     return {
-      type: "FeatureCollection",
+      type: 'FeatureCollection',
       features,
     };
   }
@@ -315,11 +350,13 @@ export class PredictiveHeatmapSystem {
           min: Math.min(...layer.dataPoints.map((p) => p.intensity)),
           max: Math.max(...layer.dataPoints.map((p) => p.intensity)),
           avg: Math.round(
-            layer.dataPoints.reduce((sum, p) => sum + p.intensity, 0) / layer.dataPoints.length
+            layer.dataPoints.reduce((sum, p) => sum + p.intensity, 0) /
+              layer.dataPoints.length
           ),
         },
-        highPriorityCount: layer.dataPoints.filter((p) => p.recommendation === "high_priority")
-          .length,
+        highPriorityCount: layer.dataPoints.filter(
+          (p) => p.recommendation === 'high_priority'
+        ).length,
       };
     }
 
@@ -329,7 +366,11 @@ export class PredictiveHeatmapSystem {
   /**
    * Get next best market to target
    */
-  getNextTargetMarket(): { city: string; zipCode: string; intensity: number } | null {
+  getNextTargetMarket(): {
+    city: string;
+    zipCode: string;
+    intensity: number;
+  } | null {
     let bestPoint: HeatmapPoint | null = null;
 
     for (const layer of this.heatmaps.values()) {
@@ -353,12 +394,12 @@ export class PredictiveHeatmapSystem {
 // GeoJSON types
 namespace GeoJSON {
   export interface FeatureCollection {
-    type: "FeatureCollection";
+    type: 'FeatureCollection';
     features: Feature[];
   }
 
   export interface Feature {
-    type: "Feature";
+    type: 'Feature';
     geometry: Geometry;
     properties: Record<string, any>;
   }

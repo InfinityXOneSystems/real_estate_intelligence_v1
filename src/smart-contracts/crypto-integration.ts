@@ -78,27 +78,35 @@ export class CryptoPaymentService {
         key: process.env.COINBASE_API_KEY || '',
         secret: process.env.COINBASE_API_SECRET || '',
       },
-      binance: process.env.BINANCE_API_KEY ? {
-        key: process.env.BINANCE_API_KEY,
-        secret: process.env.BINANCE_API_SECRET || '',
-      } : undefined,
-      kraken: process.env.KRAKEN_API_KEY ? {
-        key: process.env.KRAKEN_API_KEY,
-        secret: process.env.KRAKEN_API_SECRET || '',
-      } : undefined,
-      gemini: process.env.GEMINI_API_KEY ? {
-        key: process.env.GEMINI_API_KEY,
-        secret: process.env.GEMINI_API_SECRET || '',
-      } : undefined,
+      binance: process.env.BINANCE_API_KEY
+        ? {
+            key: process.env.BINANCE_API_KEY,
+            secret: process.env.BINANCE_API_SECRET || '',
+          }
+        : undefined,
+      kraken: process.env.KRAKEN_API_KEY
+        ? {
+            key: process.env.KRAKEN_API_KEY,
+            secret: process.env.KRAKEN_API_SECRET || '',
+          }
+        : undefined,
+      gemini: process.env.GEMINI_API_KEY
+        ? {
+            key: process.env.GEMINI_API_KEY,
+            secret: process.env.GEMINI_API_SECRET || '',
+          }
+        : undefined,
     };
 
-    console.log('✓ Crypto payment service initialized');
+    console.log('âœ“ Crypto payment service initialized');
   }
 
   /**
    * Create Coinbase Commerce charge
    */
-  async createCoinbaseCharge(request: CryptoPaymentRequest): Promise<CoinbaseCharge> {
+  async createCoinbaseCharge(
+    request: CryptoPaymentRequest
+  ): Promise<CoinbaseCharge> {
     try {
       const response = await axios.post(
         'https://api.commerce.coinbase.com/charges',
@@ -127,7 +135,7 @@ export class CryptoPaymentService {
         }
       );
 
-      console.log(`✓ Created Coinbase charge: ${response.data.data.id}`);
+      console.log(`âœ“ Created Coinbase charge: ${response.data.data.id}`);
       return response.data.data;
     } catch (error) {
       console.error('Failed to create Coinbase charge:', error);
@@ -178,7 +186,11 @@ export class CryptoPaymentService {
         to: tx.to || '',
         amount: ethers.formatEther(tx.value),
         currency: 'ETH',
-        status: receipt ? (receipt.status === 1 ? 'confirmed' : 'failed') : 'pending',
+        status: receipt
+          ? receipt.status === 1
+            ? 'confirmed'
+            : 'failed'
+          : 'pending',
         confirmations,
         timestamp: new Date(),
       };
@@ -195,7 +207,7 @@ export class CryptoPaymentService {
     try {
       const response = await axios.get('https://api.coinbase.com/v2/accounts', {
         headers: {
-          'Authorization': `Bearer ${this.exchanges.coinbase.key}`,
+          Authorization: `Bearer ${this.exchanges.coinbase.key}`,
         },
       });
 
@@ -231,12 +243,15 @@ export class CryptoPaymentService {
         this.exchanges.binance.secret
       );
 
-      const response = await axios.get('https://api.binance.com/api/v3/account', {
-        params: { timestamp, signature },
-        headers: {
-          'X-MBX-APIKEY': this.exchanges.binance.key,
-        },
-      });
+      const response = await axios.get(
+        'https://api.binance.com/api/v3/account',
+        {
+          params: { timestamp, signature },
+          headers: {
+            'X-MBX-APIKEY': this.exchanges.binance.key,
+          },
+        }
+      );
 
       const balances: Record<string, number> = {};
 
@@ -260,13 +275,18 @@ export class CryptoPaymentService {
   /**
    * Get current crypto prices
    */
-  async getCryptoPrices(currencies: string[] = ['BTC', 'ETH', 'USDC', 'USDT']): Promise<Record<string, number>> {
+  async getCryptoPrices(
+    currencies: string[] = ['BTC', 'ETH', 'USDC', 'USDT']
+  ): Promise<Record<string, number>> {
     try {
-      const symbols = currencies.map(c => `${c}USDT`).join(',');
+      const symbols = currencies.map((c) => `${c}USDT`).join(',');
 
-      const response = await axios.get('https://api.binance.com/api/v3/ticker/price', {
-        params: { symbols: `["${symbols.split(',').join('","')}"]` },
-      });
+      const response = await axios.get(
+        'https://api.binance.com/api/v3/ticker/price',
+        {
+          params: { symbols: `["${symbols.split(',').join('","')}"]` },
+        }
+      );
 
       const prices: Record<string, number> = {};
 
@@ -285,7 +305,10 @@ export class CryptoPaymentService {
   /**
    * Convert USD to crypto amount
    */
-  async convertUsdToCrypto(usdAmount: number, cryptoCurrency: string): Promise<number> {
+  async convertUsdToCrypto(
+    usdAmount: number,
+    cryptoCurrency: string
+  ): Promise<number> {
     const prices = await this.getCryptoPrices([cryptoCurrency]);
     const price = prices[cryptoCurrency];
 
@@ -378,7 +401,10 @@ export class CryptoPaymentService {
   /**
    * Create payment QR code data
    */
-  generatePaymentQR(charge: CoinbaseCharge, currency: 'bitcoin' | 'ethereum' | 'usdc'): string {
+  generatePaymentQR(
+    charge: CoinbaseCharge,
+    currency: 'bitcoin' | 'ethereum' | 'usdc'
+  ): string {
     const address = charge.addresses[currency];
     const amount = charge.pricing[currency]?.amount || '';
 

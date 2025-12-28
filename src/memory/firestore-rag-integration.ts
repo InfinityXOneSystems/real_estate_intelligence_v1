@@ -2,16 +2,16 @@
  * ============================================================================
  * FIRESTORE RAG MEMORY INTEGRATION
  * ============================================================================
- * 
+ *
  * Combines:
  * - Firestore (NoSQL real-time database)
  * - RAG Memory Service Account (Google Cloud)
  * - Intelligent LLM Router (Claude, Gemini, Groq)
  * - GCS Bucket Storage (real-estate-intelligence/)
- * 
+ *
  * Architecture:
- * Real Estate Data → Firestore → RAG Embedding → GCS Vector Store → LLM Intelligence
- * 
+ * Real Estate Data â†’ Firestore â†’ RAG Embedding â†’ GCS Vector Store â†’ LLM Intelligence
+ *
  * Status: PRODUCTION READY
  */
 
@@ -47,11 +47,11 @@ export interface PropertyMemory {
   estimatedMarketValue: number;
   daysOnMarket: number;
   situation: 'divorce' | 'probate' | 'foreclosure' | 'tax_lien' | 'distress';
-  
+
   // RAG embeddings
   vectorEmbedding?: number[]; // 768-dim or 1536-dim depending on model
   embeddingModel: 'text-embedding-3-small' | 'gecko-001' | 'text-embedding-004';
-  
+
   // Analysis history
   emotionalAnalysis?: {
     desperation: number; // 0-100
@@ -60,7 +60,7 @@ export interface PropertyMemory {
     recommendedOffer: number;
     timestamp: FieldValue;
   };
-  
+
   // Agent interactions
   agentNotes: Array<{
     agent: string;
@@ -68,7 +68,7 @@ export interface PropertyMemory {
     outcome: 'success' | 'pending' | 'failed';
     timestamp: FieldValue;
   }>;
-  
+
   // RAG context for LLM
   ragContext?: {
     similarProperties: string[]; // Similar property IDs
@@ -80,7 +80,7 @@ export interface PropertyMemory {
     }>;
     marketInsights: string[];
   };
-  
+
   createdAt: FieldValue;
   updatedAt: FieldValue;
 }
@@ -115,7 +115,11 @@ export interface RAGConfig {
 }
 
 export interface LLMConfig {
-  primaryModel: 'claude-3.5-sonnet' | 'claude-3.5-haiku' | 'gemini-2.0-flash' | 'groq-mixtral';
+  primaryModel:
+    | 'claude-3.5-sonnet'
+    | 'claude-3.5-haiku'
+    | 'gemini-2.0-flash'
+    | 'groq-mixtral';
   fallbackModel: 'claude-3.5-haiku' | 'gemini-2.0-flash' | 'groq-mixtral';
   temperature: number;
   maxTokens: number;
@@ -131,7 +135,7 @@ export class FirestoreRAGIntelligence extends EventEmitter {
   private gcsBucket!: Bucket;
   private anthropic: Anthropic;
   private gemini: GoogleGenerativeAI;
-  
+
   private firestoreConfig: FirestoreConfig;
   private ragConfig: RAGConfig;
   private llmConfig: LLMConfig;
@@ -206,7 +210,10 @@ export class FirestoreRAGIntelligence extends EventEmitter {
       });
 
       this.gcsBucket = this.gcsStorage.bucket(this.ragConfig.gcsBucketName);
-      console.log('[FirestoreRAG] GCS bucket initialized:', this.ragConfig.gcsBucketName);
+      console.log(
+        '[FirestoreRAG] GCS bucket initialized:',
+        this.ragConfig.gcsBucketName
+      );
       this.emit('gcs:ready');
     } catch (error) {
       console.error('[FirestoreRAG] GCS initialization failed:', error);
@@ -227,20 +234,21 @@ export class FirestoreRAGIntelligence extends EventEmitter {
       );
 
       // Store in Firestore
-      const docRef = await this.firestore
-        .collection('properties')
-        .add({
-          ...property,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
+      const docRef = await this.firestore.collection('properties').add({
+        ...property,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
 
       console.log(`[FirestoreRAG] Property stored with ID: ${docRef.id}`);
 
       // Store vector embedding in GCS for fast retrieval
       await this.storeVectorInGCS(docRef.id, property.vectorEmbedding);
 
-      this.emit('property:stored', { id: docRef.id, address: property.address });
+      this.emit('property:stored', {
+        id: docRef.id,
+        address: property.address,
+      });
       return docRef.id;
     } catch (error) {
       console.error('[FirestoreRAG] Storage failed:', error);
@@ -262,13 +270,14 @@ export class FirestoreRAGIntelligence extends EventEmitter {
         },
         body: JSON.stringify({
           input: text,
-          model: this.ragConfig.embeddingModel === 'text-embedding-3-small'
-            ? 'text-embedding-3-small'
-            : 'text-embedding-3-large',
+          model:
+            this.ragConfig.embeddingModel === 'text-embedding-3-small'
+              ? 'text-embedding-3-small'
+              : 'text-embedding-3-large',
         }),
       });
 
-      const data = await response.json() as any;
+      const data = (await response.json()) as any;
       return data.data[0].embedding;
     } catch (error) {
       console.error('[FirestoreRAG] Embedding generation failed:', error);
@@ -315,9 +324,12 @@ export class FirestoreRAGIntelligence extends EventEmitter {
 
       // Method 2: Text-based Firestore query
       const q = query.filters
-        ? query_(collection(this.firestore, 'properties'), ...Object.entries(
-            query.filters
-          ).map(([key, value]) => where(key, '==', value)))
+        ? query_(
+            collection(this.firestore, 'properties'),
+            ...Object.entries(query.filters).map(([key, value]) =>
+              where(key, '==', value)
+            )
+          )
         : query_(collection(this.firestore, 'properties'));
 
       const snapshot = await getDocs(q);
@@ -355,7 +367,10 @@ export class FirestoreRAGIntelligence extends EventEmitter {
       for (const file of files) {
         const [data] = await file.download();
         const vectorData = JSON.parse(data.toString()) as any;
-        const similarity = this.cosineSimilarity(queryVector, vectorData.vector);
+        const similarity = this.cosineSimilarity(
+          queryVector,
+          vectorData.vector
+        );
         scores.push({
           propertyId: vectorData.id,
           score: similarity,
@@ -416,7 +431,11 @@ export class FirestoreRAGIntelligence extends EventEmitter {
       property.ragContext = ragContext;
 
       // Step 2: Build prompt with RAG context
-      const prompt = this.buildIntelligentPrompt(property, analysisType, ragContext);
+      const prompt = this.buildIntelligentPrompt(
+        property,
+        analysisType,
+        ragContext
+      );
 
       // Step 3: Get LLM response (with fallback)
       let response: LLMIntelligenceResponse;
@@ -476,7 +495,9 @@ export class FirestoreRAGIntelligence extends EventEmitter {
   /**
    * Generate market insights from historical data
    */
-  private async generateMarketInsights(property: PropertyMemory): Promise<string[]> {
+  private async generateMarketInsights(
+    property: PropertyMemory
+  ): Promise<string[]> {
     // Query similar properties for insights
     const insights: string[] = [];
 
@@ -486,7 +507,9 @@ export class FirestoreRAGIntelligence extends EventEmitter {
       .limit(10)
       .get();
 
-    const properties = snapshot.docs.map((doc) => doc.data()) as PropertyMemory[];
+    const properties = snapshot.docs.map((doc) =>
+      doc.data()
+    ) as PropertyMemory[];
 
     // Calculate average negotiation leverage
     const avgNegotiationScores = properties
@@ -497,7 +520,9 @@ export class FirestoreRAGIntelligence extends EventEmitter {
       });
 
     if (avgNegotiationScores.length > 0) {
-      const avg = avgNegotiationScores.reduce((a, b) => a + b) / avgNegotiationScores.length;
+      const avg =
+        avgNegotiationScores.reduce((a, b) => a + b) /
+        avgNegotiationScores.length;
       insights.push(
         `Average negotiation leverage for ${property.situation}: ${avg.toFixed(2)}`
       );
@@ -545,7 +570,9 @@ Format as JSON with keys: recommendation, confidence, reasoning, alternativeAppr
   /**
    * Call primary LLM (Claude)
    */
-  private async callPrimaryLLM(prompt: string): Promise<LLMIntelligenceResponse> {
+  private async callPrimaryLLM(
+    prompt: string
+  ): Promise<LLMIntelligenceResponse> {
     try {
       const message = await this.anthropic.messages.create({
         model: this.llmConfig.primaryModel as any,
@@ -577,9 +604,13 @@ Format as JSON with keys: recommendation, confidence, reasoning, alternativeAppr
   /**
    * Call fallback LLM (Gemini)
    */
-  private async callFallbackLLM(prompt: string): Promise<LLMIntelligenceResponse> {
+  private async callFallbackLLM(
+    prompt: string
+  ): Promise<LLMIntelligenceResponse> {
     try {
-      const model = this.gemini.getGenerativeModel({ model: 'gemini-2.0-flash' });
+      const model = this.gemini.getGenerativeModel({
+        model: 'gemini-2.0-flash',
+      });
       const result = await model.generateContent(prompt);
 
       const text = result.response.text();
@@ -602,13 +633,10 @@ Format as JSON with keys: recommendation, confidence, reasoning, alternativeAppr
     response: LLMIntelligenceResponse
   ): Promise<void> {
     try {
-      await this.firestore
-        .collection('properties')
-        .doc(propertyId)
-        .update({
-          'analysis.lastResult': response,
-          'analysis.lastUpdated': serverTimestamp(),
-        });
+      await this.firestore.collection('properties').doc(propertyId).update({
+        'analysis.lastResult': response,
+        'analysis.lastUpdated': serverTimestamp(),
+      });
 
       console.log(`[FirestoreRAG] Analysis stored for property: ${propertyId}`);
     } catch (error) {
@@ -682,7 +710,9 @@ Format as JSON with keys: recommendation, confidence, reasoning, alternativeAppr
    */
   async batchImportProperties(properties: PropertyMemory[]): Promise<string[]> {
     try {
-      console.log(`[FirestoreRAG] Batch importing ${properties.length} properties`);
+      console.log(
+        `[FirestoreRAG] Batch importing ${properties.length} properties`
+      );
 
       const ids: string[] = [];
       for (const property of properties) {
@@ -711,14 +741,20 @@ export function initializeFirestoreRAG(
   llmConfig?: LLMConfig
 ): FirestoreRAGIntelligence {
   if (!firestoreRAG) {
-    firestoreRAG = new FirestoreRAGIntelligence(firestoreConfig, ragConfig, llmConfig);
+    firestoreRAG = new FirestoreRAGIntelligence(
+      firestoreConfig,
+      ragConfig,
+      llmConfig
+    );
   }
   return firestoreRAG;
 }
 
 export function getFirestoreRAG(): FirestoreRAGIntelligence {
   if (!firestoreRAG) {
-    throw new Error('FirestoreRAG not initialized. Call initializeFirestoreRAG first.');
+    throw new Error(
+      'FirestoreRAG not initialized. Call initializeFirestoreRAG first.'
+    );
   }
   return firestoreRAG;
 }

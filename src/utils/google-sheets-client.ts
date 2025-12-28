@@ -3,8 +3,8 @@
  * Writes property data to shared spreadsheet with editor access
  */
 
-import { google } from "googleapis";
-import type { OAuth2Client } from "google-auth-library";
+import { google } from 'googleapis';
+import type { OAuth2Client } from 'google-auth-library';
 
 interface PropertyRecord {
   address: string;
@@ -21,7 +21,7 @@ interface PropertyRecord {
   listingDate: string;
   listingUrl: string;
   distressScore?: number;
-  foreclosureRisk?: "low" | "medium" | "high";
+  foreclosureRisk?: 'low' | 'medium' | 'high';
   estimatedValue?: number;
   daysOnMarket?: number;
   priceReduction?: number;
@@ -56,19 +56,21 @@ export class GoogleSheetsClient {
     try {
       // Use service account authentication
       const auth = new google.auth.GoogleAuth({
-        keyFile: this.config.credentialsPath || process.env.GOOGLE_APPLICATION_CREDENTIALS,
+        keyFile:
+          this.config.credentialsPath ||
+          process.env.GOOGLE_APPLICATION_CREDENTIALS,
         scopes: [
-          "https://www.googleapis.com/auth/spreadsheets",
-          "https://www.googleapis.com/auth/drive.file",
+          'https://www.googleapis.com/auth/spreadsheets',
+          'https://www.googleapis.com/auth/drive.file',
         ],
       });
 
-      this.auth = await auth.getClient() as OAuth2Client;
-      this.sheets = google.sheets({ version: "v4", auth: this.auth });
+      this.auth = (await auth.getClient()) as OAuth2Client;
+      this.sheets = google.sheets({ version: 'v4', auth: this.auth });
 
-      console.log("✓ Google Sheets client initialized");
+      console.log('âœ“ Google Sheets client initialized');
     } catch (error) {
-      console.error("Failed to initialize Google Sheets client:", error);
+      console.error('Failed to initialize Google Sheets client:', error);
       throw error;
     }
   }
@@ -106,7 +108,7 @@ export class GoogleSheetsClient {
           },
         });
 
-        console.log(`✓ Created new sheet: ${this.config.sheetName}`);
+        console.log(`âœ“ Created new sheet: ${this.config.sheetName}`);
       }
 
       // Check if headers exist
@@ -121,7 +123,7 @@ export class GoogleSheetsClient {
         await this.addHeaders();
       }
     } catch (error) {
-      console.error("Failed to ensure sheet structure:", error);
+      console.error('Failed to ensure sheet structure:', error);
       throw error;
     }
   }
@@ -131,38 +133,38 @@ export class GoogleSheetsClient {
    */
   private async addHeaders(): Promise<void> {
     const headers = [
-      "Address",
-      "City",
-      "State",
-      "ZIP Code",
-      "Price",
-      "Bedrooms",
-      "Bathrooms",
-      "Square Feet",
-      "Lot Size",
-      "Year Built",
-      "Property Type",
-      "Listing Date",
-      "Listing URL",
-      "Distress Score",
-      "Foreclosure Risk",
-      "Estimated Value",
-      "Days on Market",
-      "Price Reduction",
-      "MLS Number",
-      "Agent Name",
-      "Agent Phone",
-      "Description",
-      "Features",
-      "Last Updated",
-      "Data Source",
-      "Crawl Timestamp",
+      'Address',
+      'City',
+      'State',
+      'ZIP Code',
+      'Price',
+      'Bedrooms',
+      'Bathrooms',
+      'Square Feet',
+      'Lot Size',
+      'Year Built',
+      'Property Type',
+      'Listing Date',
+      'Listing URL',
+      'Distress Score',
+      'Foreclosure Risk',
+      'Estimated Value',
+      'Days on Market',
+      'Price Reduction',
+      'MLS Number',
+      'Agent Name',
+      'Agent Phone',
+      'Description',
+      'Features',
+      'Last Updated',
+      'Data Source',
+      'Crawl Timestamp',
     ];
 
     await this.sheets.spreadsheets.values.update({
       spreadsheetId: this.config.spreadsheetId,
       range: `${this.config.sheetName}!A1`,
-      valueInputOption: "RAW",
+      valueInputOption: 'RAW',
       resource: {
         values: [headers],
       },
@@ -189,14 +191,14 @@ export class GoogleSheetsClient {
                   },
                 },
               },
-              fields: "userEnteredFormat(backgroundColor,textFormat)",
+              fields: 'userEnteredFormat(backgroundColor,textFormat)',
             },
           },
         ],
       },
     });
 
-    console.log("✓ Added headers to sheet");
+    console.log('âœ“ Added headers to sheet');
   }
 
   /**
@@ -219,7 +221,7 @@ export class GoogleSheetsClient {
    */
   async appendProperties(properties: PropertyRecord[]): Promise<number> {
     if (!this.auth) {
-      throw new Error("Google Sheets client not initialized");
+      throw new Error('Google Sheets client not initialized');
     }
 
     try {
@@ -232,41 +234,41 @@ export class GoogleSheetsClient {
         prop.bedrooms,
         prop.bathrooms,
         prop.squareFeet,
-        prop.lotSize || "",
-        prop.yearBuilt || "",
+        prop.lotSize || '',
+        prop.yearBuilt || '',
         prop.propertyType,
         prop.listingDate,
         prop.listingUrl,
-        prop.distressScore || "",
-        prop.foreclosureRisk || "",
-        prop.estimatedValue || "",
-        prop.daysOnMarket || "",
-        prop.priceReduction || "",
-        prop.mlsNumber || "",
-        prop.agentName || "",
-        prop.agentPhone || "",
-        prop.description || "",
-        prop.features?.join(", ") || "",
+        prop.distressScore || '',
+        prop.foreclosureRisk || '',
+        prop.estimatedValue || '',
+        prop.daysOnMarket || '',
+        prop.priceReduction || '',
+        prop.mlsNumber || '',
+        prop.agentName || '',
+        prop.agentPhone || '',
+        prop.description || '',
+        prop.features?.join(', ') || '',
         prop.lastUpdated,
-        "Intelligence System",
+        'Intelligence System',
         new Date().toISOString(),
       ]);
 
       const response = await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.config.spreadsheetId,
         range: `${this.config.sheetName}!A:Z`,
-        valueInputOption: "USER_ENTERED",
+        valueInputOption: 'USER_ENTERED',
         resource: {
           values: rows,
         },
       });
 
       const updatedRows = response.data.updates?.updatedRows || 0;
-      console.log(`✓ Appended ${updatedRows} properties to Google Sheets`);
+      console.log(`âœ“ Appended ${updatedRows} properties to Google Sheets`);
 
       return updatedRows;
     } catch (error) {
-      console.error("Failed to append properties to Google Sheets:", error);
+      console.error('Failed to append properties to Google Sheets:', error);
       throw error;
     }
   }
@@ -290,7 +292,7 @@ export class GoogleSheetsClient {
         addresses.filter((addr) => existingAddresses.has(addr.toLowerCase()))
       );
     } catch (error) {
-      console.error("Failed to check for duplicates:", error);
+      console.error('Failed to check for duplicates:', error);
       return new Set();
     }
   }
@@ -309,7 +311,7 @@ export class GoogleSheetsClient {
     );
 
     if (newProperties.length === 0) {
-      console.log("No new properties to add (all duplicates)");
+      console.log('No new properties to add (all duplicates)');
       return 0;
     }
 
@@ -333,7 +335,7 @@ export class GoogleSheetsClient {
 
       return response.data.values?.length || 0;
     } catch (error) {
-      console.error("Failed to get row count:", error);
+      console.error('Failed to get row count:', error);
       return 0;
     }
   }
@@ -345,7 +347,7 @@ export class GoogleSheetsClient {
     try {
       const rowCount = await this.getRowCount();
       if (rowCount <= 1) {
-        console.log("No data to clear");
+        console.log('No data to clear');
         return;
       }
 
@@ -354,9 +356,9 @@ export class GoogleSheetsClient {
         range: `${this.config.sheetName}!A2:Z`,
       });
 
-      console.log("✓ Cleared all data from sheet");
+      console.log('âœ“ Cleared all data from sheet');
     } catch (error) {
-      console.error("Failed to clear data:", error);
+      console.error('Failed to clear data:', error);
       throw error;
     }
   }
@@ -370,11 +372,11 @@ export function getGoogleSheetsClient(): GoogleSheetsClient {
     const config: GoogleSheetsConfig = {
       spreadsheetId:
         process.env.GOOGLE_SHEETS_SPREADSHEET_ID ||
-        "1u1USJDfPR5qZSb6-Zs4JyIyDFLLLfZhHKr1KJcFKrgU",
-      sheetName: process.env.GOOGLE_SHEETS_SHEET_NAME || "New Properties",
+        '1u1USJDfPR5qZSb6-Zs4JyIyDFLLLfZhHKr1KJcFKrgU',
+      sheetName: process.env.GOOGLE_SHEETS_SHEET_NAME || 'New Properties',
       serviceAccountEmail:
         process.env.SERVICE_ACCOUNT_EMAIL ||
-        "real-estate-intelligence@infinity-x-one-systems.iam.gserviceaccount.com",
+        'real-estate-intelligence@infinity-x-one-systems.iam.gserviceaccount.com',
       credentialsPath: process.env.GOOGLE_APPLICATION_CREDENTIALS,
     };
 

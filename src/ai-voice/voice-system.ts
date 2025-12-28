@@ -4,7 +4,7 @@
  * Using ElevenLabs for voice synthesis and Google Speech-to-Text for recognition
  */
 
-import { ElevenLabsClient } from "elevenlabs-node";
+import { ElevenLabsClient } from 'elevenlabs-node';
 import { SpeechClient } from '@google-cloud/speech';
 import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 import * as twilio from 'twilio';
@@ -79,8 +79,8 @@ export class AIVoiceSystem {
       voiceId: 'EXAVITQu4vr4xnSDxMaL', // Sarah (professional female voice)
       model: 'eleven_turbo_v2_5', // Fastest, lowest latency
       stability: 0.71,
-      similarityBoost: 0.50,
-      style: 0.30,
+      similarityBoost: 0.5,
+      style: 0.3,
       useSpeakerBoost: true,
     };
   }
@@ -103,17 +103,19 @@ export class AIVoiceSystem {
         record: true,
       });
 
-      console.log(`✓ Outbound call initiated: ${call.sid}`);
+      console.log(`âœ“ Outbound call initiated: ${call.sid}`);
 
       this.activeSessions.set(call.sid, {
         callSid: call.sid,
         phoneNumber,
         propertyId,
-        conversationHistory: [{
-          role: 'assistant',
-          content: script,
-          timestamp: new Date(),
-        }],
+        conversationHistory: [
+          {
+            role: 'assistant',
+            content: script,
+            timestamp: new Date(),
+          },
+        ],
       });
 
       return call.sid;
@@ -137,7 +139,7 @@ export class AIVoiceSystem {
 
     // Initial greeting
     const greeting = await this.generateResponse(
-      "Hello! This is the Real Estate Intelligence system. How can I help you today?",
+      'Hello! This is the Real Estate Intelligence system. How can I help you today?',
       session
     );
 
@@ -212,9 +214,10 @@ export class AIVoiceSystem {
         },
       });
 
-      const transcription = response.results
-        ?.map(result => result.alternatives?.[0]?.transcript)
-        .join(' ') || '';
+      const transcription =
+        response.results
+          ?.map((result) => result.alternatives?.[0]?.transcript)
+          .join(' ') || '';
 
       return transcription;
     } catch (error) {
@@ -279,7 +282,8 @@ export class AIVoiceSystem {
     // Simple keyword-based intent detection (can be enhanced with AI)
     const lowerText = text.toLowerCase();
 
-    let intent: 'inquiry' | 'appointment' | 'information' | 'complaint' = 'inquiry';
+    let intent: 'inquiry' | 'appointment' | 'information' | 'complaint' =
+      'inquiry';
 
     if (lowerText.match(/schedule|appointment|visit|see|tour/)) {
       intent = 'appointment';
@@ -321,13 +325,13 @@ export class AIVoiceSystem {
         if (session.propertyId) {
           return `Let me pull up the details for property ${session.propertyId}. It's a beautiful property in an excellent location.`;
         }
-        return "What property are you interested in learning more about?";
+        return 'What property are you interested in learning more about?';
 
       case 'complaint':
         return "I'm sorry to hear you're experiencing an issue. Let me connect you with our support team who can help resolve this.";
 
       default:
-        return "How can I assist you with your real estate needs today?";
+        return 'How can I assist you with your real estate needs today?';
     }
   }
 
@@ -337,7 +341,7 @@ export class AIVoiceSystem {
   async scheduleAppointment(request: AppointmentRequest): Promise<boolean> {
     try {
       // This will integrate with Google Calendar API
-      console.log(`✓ Scheduling appointment for ${request.propertyId}`);
+      console.log(`âœ“ Scheduling appointment for ${request.propertyId}`);
       console.log(`  Visitor: ${request.visitorName}`);
       console.log(`  Phone: ${request.phoneNumber}`);
       console.log(`  Date: ${request.preferredDate}`);
@@ -360,7 +364,10 @@ export class AIVoiceSystem {
   /**
    * Generate response for assistant
    */
-  private async generateResponse(text: string, session: CallSession): Promise<string> {
+  private async generateResponse(
+    text: string,
+    session: CallSession
+  ): Promise<string> {
     session.conversationHistory.push({
       role: 'assistant',
       content: text,

@@ -62,7 +62,7 @@ export class GoogleWalletService {
       scopes: ['https://www.googleapis.com/auth/wallet_object.issuer'],
     });
 
-    console.log('✓ Google Wallet service initialized');
+    console.log('âœ“ Google Wallet service initialized');
   }
 
   /**
@@ -119,7 +119,7 @@ export class GoogleWalletService {
       // Generate JWT for Add to Google Wallet button
       const saveUrl = await this.generateSaveUrl([passObject]);
 
-      console.log(`✓ Created property access pass: ${objectId}`);
+      console.log(`âœ“ Created property access pass: ${objectId}`);
       return saveUrl;
     } catch (error) {
       console.error('Failed to create property access pass:', error);
@@ -171,7 +171,7 @@ export class GoogleWalletService {
 
       const saveUrl = await this.generateSaveUrl([loyaltyObject]);
 
-      console.log(`✓ Created loyalty pass: ${objectId}`);
+      console.log(`âœ“ Created loyalty pass: ${objectId}`);
       return saveUrl;
     } catch (error) {
       console.error('Failed to create loyalty pass:', error);
@@ -221,7 +221,7 @@ export class GoogleWalletService {
 
       const saveUrl = await this.generateSaveUrl([offerObject]);
 
-      console.log(`✓ Created offer pass: ${objectId}`);
+      console.log(`âœ“ Created offer pass: ${objectId}`);
       return saveUrl;
     } catch (error) {
       console.error('Failed to create offer pass:', error);
@@ -232,7 +232,10 @@ export class GoogleWalletService {
   /**
    * Update loyalty points
    */
-  async updateLoyaltyPoints(programId: string, newPoints: number): Promise<void> {
+  async updateLoyaltyPoints(
+    programId: string,
+    newPoints: number
+  ): Promise<void> {
     try {
       const objectId = `${this.issuerId}.loyalty_${programId}`;
 
@@ -246,7 +249,7 @@ export class GoogleWalletService {
 
       await this.patchPassObject(objectId, updatePayload);
 
-      console.log(`✓ Updated loyalty points for ${programId}: ${newPoints}`);
+      console.log(`âœ“ Updated loyalty points for ${programId}: ${newPoints}`);
     } catch (error) {
       console.error('Failed to update loyalty points:', error);
       throw error;
@@ -259,7 +262,7 @@ export class GoogleWalletService {
   async expirePass(objectId: string): Promise<void> {
     try {
       await this.patchPassObject(objectId, { state: 'EXPIRED' });
-      console.log(`✓ Expired pass: ${objectId}`);
+      console.log(`âœ“ Expired pass: ${objectId}`);
     } catch (error) {
       console.error('Failed to expire pass:', error);
       throw error;
@@ -296,7 +299,7 @@ export class GoogleWalletService {
         }
       );
 
-      console.log(`✓ Created pass class: ${classId}`);
+      console.log(`âœ“ Created pass class: ${classId}`);
     } catch (error: any) {
       if (error.response?.status === 409) {
         // Class already exists
@@ -337,7 +340,7 @@ export class GoogleWalletService {
         }
       );
 
-      console.log(`✓ Created loyalty class: ${classId}`);
+      console.log(`âœ“ Created loyalty class: ${classId}`);
     } catch (error: any) {
       if (error.response?.status === 409) {
         console.log(`Loyalty class already exists: ${classId}`);

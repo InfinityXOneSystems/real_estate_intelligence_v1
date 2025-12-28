@@ -37,14 +37,31 @@ app.get('/api/heatmap', async (req: Request, res: Response) => {
   try {
     // This would fetch from database or cache
     const mockHeatmap = [
-      { lat: 27.2931, lng: -80.3253, weight: 85, factors: { demand: 90, affordability: 75, growth: 88, quality: 87 } },
-      { lat: 27.4467, lng: -80.3256, weight: 78, factors: { demand: 80, affordability: 82, growth: 75, quality: 76 } },
-      { lat: 27.3805, lng: -80.3998, weight: 92, factors: { demand: 95, affordability: 85, growth: 93, quality: 95 } },
+      {
+        lat: 27.2931,
+        lng: -80.3253,
+        weight: 85,
+        factors: { demand: 90, affordability: 75, growth: 88, quality: 87 },
+      },
+      {
+        lat: 27.4467,
+        lng: -80.3256,
+        weight: 78,
+        factors: { demand: 80, affordability: 82, growth: 75, quality: 76 },
+      },
+      {
+        lat: 27.3805,
+        lng: -80.3998,
+        weight: 92,
+        factors: { demand: 95, affordability: 85, growth: 93, quality: 95 },
+      },
     ];
 
     res.json({ success: true, data: mockHeatmap });
   } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to fetch heatmap data' });
+    res
+      .status(500)
+      .json({ success: false, error: 'Failed to fetch heatmap data' });
   }
 });
 
@@ -82,7 +99,9 @@ app.get('/api/properties/recent', async (req: Request, res: Response) => {
 
     res.json({ success: true, data: mockProperties });
   } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to fetch properties' });
+    res
+      .status(500)
+      .json({ success: false, error: 'Failed to fetch properties' });
   }
 });
 
@@ -121,7 +140,9 @@ app.get('/api/voice/analytics', async (req: Request, res: Response) => {
 
     res.json({ success: true, data: analytics });
   } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to fetch voice analytics' });
+    res
+      .status(500)
+      .json({ success: false, error: 'Failed to fetch voice analytics' });
   }
 });
 
@@ -140,7 +161,9 @@ app.get('/api/payments/stats', async (req: Request, res: Response) => {
 
     res.json({ success: true, data: stats });
   } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to fetch payment stats' });
+    res
+      .status(500)
+      .json({ success: false, error: 'Failed to fetch payment stats' });
   }
 });
 
@@ -166,7 +189,11 @@ app.post('/api/trigger/cycle', async (req: Request, res: Response) => {
 app.post('/api/trigger/phase/:phase', async (req: Request, res: Response) => {
   const { phase } = req.params;
 
-  if (!['statistics', 'analysis', 'outreach', 'payments', 'workflow'].includes(phase)) {
+  if (
+    !['statistics', 'analysis', 'outreach', 'payments', 'workflow'].includes(
+      phase
+    )
+  ) {
     return res.status(400).json({ success: false, error: 'Invalid phase' });
   }
 
@@ -277,11 +304,11 @@ app.get('/', (req: Request, res: Response) => {
     </head>
     <body>
       <div class="container">
-        <h1>🏠 Real Estate Intelligence System <span class="live">●</span></h1>
+        <h1>ðŸ  Real Estate Intelligence System <span class="live">â—</span></h1>
 
         <div class="grid">
           <div class="card">
-            <h2>📊 System Status</h2>
+            <h2>ðŸ“Š System Status</h2>
             <div class="metric">
               <span class="metric-label">Status</span>
               <span class="status status-active">ACTIVE</span>
@@ -297,7 +324,7 @@ app.get('/', (req: Request, res: Response) => {
           </div>
 
           <div class="card">
-            <h2>💰 Payment Processing</h2>
+            <h2>ðŸ’° Payment Processing</h2>
             <div class="metric">
               <span class="metric-label">Stripe (Test)</span>
               <span class="metric-value">$1.25M</span>
@@ -313,7 +340,7 @@ app.get('/', (req: Request, res: Response) => {
           </div>
 
           <div class="card">
-            <h2>🎯 Deal Pipeline</h2>
+            <h2>ðŸŽ¯ Deal Pipeline</h2>
             <div class="metric">
               <span class="metric-label">Active Leads</span>
               <span class="metric-value">45</span>
@@ -329,7 +356,7 @@ app.get('/', (req: Request, res: Response) => {
           </div>
 
           <div class="card">
-            <h2>📞 AI Voice Analytics</h2>
+            <h2>ðŸ“ž AI Voice Analytics</h2>
             <div class="metric">
               <span class="metric-label">Total Calls</span>
               <span class="metric-value">156</span>
@@ -346,12 +373,12 @@ app.get('/', (req: Request, res: Response) => {
         </div>
 
         <div class="controls">
-          <h2 style="margin-bottom: 20px;">⚡ System Controls</h2>
+          <h2 style="margin-bottom: 20px;">âš¡ System Controls</h2>
           <button class="btn btn-success" onclick="triggerCycle()">Run Intelligence Cycle</button>
           <button class="btn" onclick="triggerPhase('statistics')">Statistics</button>
           <button class="btn" onclick="triggerPhase('outreach')">Outreach</button>
           <button class="btn" onclick="triggerPhase('payments')">Payments</button>
-          <a href="https://sheets.google.com/feeds/spreadsheets/1u1USJDfPR5qZSb6-Zs4JyIyDFLLLfZhHKr1KJcFKrgU" target="_blank" class="btn">📝 View Google Sheets</a>
+          <a href="https://sheets.google.com/feeds/spreadsheets/1u1USJDfPR5qZSb6-Zs4JyIyDFLLLfZhHKr1KJcFKrgU" target="_blank" class="btn">ðŸ“ View Google Sheets</a>
         </div>
       </div>
 
@@ -360,9 +387,9 @@ app.get('/', (req: Request, res: Response) => {
           try {
             const res = await fetch('/api/trigger/cycle', { method: 'POST' });
             const data = await res.json();
-            alert(data.success ? '✅ Intelligence cycle triggered!' : '❌ Failed');
+            alert(data.success ? 'âœ… Intelligence cycle triggered!' : 'âŒ Failed');
           } catch (e) {
-            alert('❌ Error: ' + e.message);
+            alert('âŒ Error: ' + e.message);
           }
         }
 
@@ -370,9 +397,9 @@ app.get('/', (req: Request, res: Response) => {
           try {
             const res = await fetch(\`/api/trigger/phase/\${phase}\`, { method: 'POST' });
             const data = await res.json();
-            alert(data.success ? \`✅ \${phase} completed!\` : \`❌ \${phase} failed\`);
+            alert(data.success ? \`âœ… \${phase} completed!\` : \`âŒ \${phase} failed\`);
           } catch (e) {
-            alert('❌ Error: ' + e.message);
+            alert('âŒ Error: ' + e.message);
           }
         }
 
@@ -397,7 +424,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`\n🎨 Dashboard running at http://localhost:${PORT}`);
+  console.log(`\nðŸŽ¨ Dashboard running at http://localhost:${PORT}`);
   console.log(`   API: http://localhost:${PORT}/api/status`);
   console.log(`   Heatmap: http://localhost:${PORT}/api/heatmap\n`);
 });

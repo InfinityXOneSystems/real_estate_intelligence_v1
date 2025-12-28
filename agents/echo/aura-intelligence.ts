@@ -232,7 +232,7 @@ export class AuraIntelligence {
     // Add wellbeing recommendations
     if (balanceStrategy.risks.length > 0) {
       for (const risk of balanceStrategy.risks) {
-        insights.push(`⚠️ ${risk.risk} - ${risk.mitigation}`);
+        insights.push(`âš ï¸ ${risk.risk} - ${risk.mitigation}`);
       }
     }
 

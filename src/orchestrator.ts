@@ -34,14 +34,17 @@ export class RealEstateOrchestrator extends EventEmitter {
     this.config = {
       enableCrawlers: process.env.ENABLE_CRAWLERS === 'true' || true,
       enableAIVoice: process.env.ENABLE_AI_VOICE === 'true' || true,
-      enableWorkflowAutomation: process.env.ENABLE_WORKFLOW_AUTOMATION === 'true' || true,
-      enableSmartContracts: process.env.ENABLE_SMART_CONTRACTS === 'true' || true,
-      enableStatistics: process.env.ENABLE_STATISTICS_SCRAPER === 'true' || true,
+      enableWorkflowAutomation:
+        process.env.ENABLE_WORKFLOW_AUTOMATION === 'true' || true,
+      enableSmartContracts:
+        process.env.ENABLE_SMART_CONTRACTS === 'true' || true,
+      enableStatistics:
+        process.env.ENABLE_STATISTICS_SCRAPER === 'true' || true,
       cronSchedule: process.env.CRON_SCHEDULE || '0 6,12,18,23 * * *',
       ...config,
     };
 
-    console.log('🚀 Real Estate Intelligence Orchestrator initialized');
+    console.log('ðŸš€ Real Estate Intelligence Orchestrator initialized');
     console.log(`Cron schedule: ${this.config.cronSchedule}`);
   }
 
@@ -50,7 +53,7 @@ export class RealEstateOrchestrator extends EventEmitter {
    */
   async executeIntelligenceCycle(): Promise<void> {
     if (this.isRunning) {
-      console.log('⚠ Intelligence cycle already running, skipping...');
+      console.log('âš  Intelligence cycle already running, skipping...');
       return;
     }
 
@@ -59,53 +62,54 @@ export class RealEstateOrchestrator extends EventEmitter {
     const startTime = Date.now();
 
     console.log(`\n${'='.repeat(80)}`);
-    console.log(`🔄 INTELLIGENCE CYCLE #${this.runCount} - ${new Date().toISOString()}`);
+    console.log(
+      `ðŸ”„ INTELLIGENCE CYCLE #${this.runCount} - ${new Date().toISOString()}`
+    );
     console.log(`${'='.repeat(80)}\n`);
 
     try {
       // Phase 1: Data Collection (Statistics & Market Intelligence)
       if (this.config.enableStatistics) {
-        console.log('📊 Phase 1: Statistics & Market Intelligence');
+        console.log('ðŸ“Š Phase 1: Statistics & Market Intelligence');
         await this.runStatisticsCollection();
       }
 
       // Phase 2: Intelligent Analysis (AI Processing)
-      console.log('\n🧠 Phase 2: AI Intelligence Analysis');
+      console.log('\nðŸ§  Phase 2: AI Intelligence Analysis');
       await this.runIntelligentAnalysis();
 
       // Phase 3: Automated Outreach (Voice & Email)
       if (this.config.enableAIVoice || this.config.enableWorkflowAutomation) {
-        console.log('\n📞 Phase 3: Automated Client Outreach');
+        console.log('\nðŸ“ž Phase 3: Automated Client Outreach');
         await this.runAutomatedOutreach();
       }
 
       // Phase 4: Payment Processing & Contract Management
       if (this.config.enableSmartContracts) {
-        console.log('\n💰 Phase 4: Payment & Contract Processing');
+        console.log('\nðŸ’° Phase 4: Payment & Contract Processing');
         await this.runPaymentProcessing();
       }
 
       // Phase 5: Workflow Automation (Calendar, Tasks, Follow-ups)
       if (this.config.enableWorkflowAutomation) {
-        console.log('\n📋 Phase 5: Workflow Automation');
+        console.log('\nðŸ“‹ Phase 5: Workflow Automation');
         await this.runWorkflowAutomation();
       }
 
       // Phase 6: Sync to Google Sheets
-      console.log('\n📝 Phase 6: Data Synchronization');
+      console.log('\nðŸ“ Phase 6: Data Synchronization');
       await this.syncToGoogleSheets();
 
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-      console.log(`\n✅ Intelligence cycle completed in ${duration}s\n`);
+      console.log(`\nâœ… Intelligence cycle completed in ${duration}s\n`);
 
       this.emit('cycle:complete', {
         runCount: this.runCount,
         duration: parseFloat(duration),
         timestamp: new Date(),
       });
-
     } catch (error) {
-      console.error('❌ Intelligence cycle failed:', error);
+      console.error('âŒ Intelligence cycle failed:', error);
       this.emit('cycle:error', error);
     } finally {
       this.isRunning = false;
@@ -122,7 +126,7 @@ export class RealEstateOrchestrator extends EventEmitter {
       // Generate heatmap data for Treasure Coast
       const heatmapData = await statisticsScraper.generateHeatmapData();
 
-      console.log(`✓ Generated ${heatmapData.length} heatmap points`);
+      console.log(`âœ“ Generated ${heatmapData.length} heatmap points`);
 
       // Close scraper
       await statisticsScraper.close();
@@ -139,7 +143,7 @@ export class RealEstateOrchestrator extends EventEmitter {
   private async runIntelligentAnalysis(): Promise<void> {
     try {
       // This would integrate with emotional predictor, investor matcher, etc.
-      console.log('✓ AI analysis engines ready');
+      console.log('âœ“ AI analysis engines ready');
 
       // Example: Analyze properties, match investors, predict seller emotions
       // Results would feed into outreach phase
@@ -160,7 +164,7 @@ export class RealEstateOrchestrator extends EventEmitter {
       // Send automated emails
 
       const activeVoiceSessions = voiceSystem.getActiveSessionCount();
-      console.log(`✓ Voice system active: ${activeVoiceSessions} calls`);
+      console.log(`âœ“ Voice system active: ${activeVoiceSessions} calls`);
 
       // Example: Send follow-up emails
       if (this.config.enableWorkflowAutomation) {
@@ -169,7 +173,7 @@ export class RealEstateOrchestrator extends EventEmitter {
           unreadOnly: true,
         });
 
-        console.log(`✓ Processed ${inbox.length} unread emails`);
+        console.log(`âœ“ Processed ${inbox.length} unread emails`);
 
         // Auto-respond to inquiries
         for (const message of inbox.slice(0, 5)) {
@@ -192,7 +196,7 @@ export class RealEstateOrchestrator extends EventEmitter {
       // Verify crypto transactions
       // Update smart contracts
 
-      console.log('✓ Payment systems synchronized');
+      console.log('âœ“ Payment systems synchronized');
 
       // Get crypto prices for reporting
       const prices = await cryptoPayments.getCryptoPrices();
@@ -212,11 +216,11 @@ export class RealEstateOrchestrator extends EventEmitter {
     try {
       // Get upcoming appointments
       const upcomingEvents = await workflowAutomation.getUpcomingEvents(7);
-      console.log(`✓ ${upcomingEvents.length} appointments scheduled`);
+      console.log(`âœ“ ${upcomingEvents.length} appointments scheduled`);
 
       // Get pending tasks
       const tasks = await workflowAutomation.getTasks();
-      console.log(`✓ ${tasks.length} active tasks`);
+      console.log(`âœ“ ${tasks.length} active tasks`);
 
       // Auto-schedule follow-ups based on inquiry age
       // This would check database for properties with > 24h old inquiries
@@ -235,7 +239,7 @@ export class RealEstateOrchestrator extends EventEmitter {
       // This would push all new data to Google Sheets
       // Property leads, heatmap data, statistics, etc.
 
-      console.log('✓ Data synced to Google Sheets');
+      console.log('âœ“ Data synced to Google Sheets');
 
       this.emit('sync:complete');
     } catch (error) {
@@ -247,7 +251,7 @@ export class RealEstateOrchestrator extends EventEmitter {
    * Start orchestrator (manual trigger)
    */
   async start(): Promise<void> {
-    console.log('▶ Starting Real Estate Intelligence Orchestrator...');
+    console.log('â–¶ Starting Real Estate Intelligence Orchestrator...');
     await this.executeIntelligenceCycle();
   }
 
@@ -271,8 +275,10 @@ export class RealEstateOrchestrator extends EventEmitter {
   /**
    * Manual trigger for specific phase
    */
-  async executePhase(phase: 'statistics' | 'analysis' | 'outreach' | 'payments' | 'workflow'): Promise<void> {
-    console.log(`\n🎯 Manual trigger: ${phase}`);
+  async executePhase(
+    phase: 'statistics' | 'analysis' | 'outreach' | 'payments' | 'workflow'
+  ): Promise<void> {
+    console.log(`\nðŸŽ¯ Manual trigger: ${phase}`);
 
     switch (phase) {
       case 'statistics':
@@ -299,14 +305,14 @@ if (require.main === module) {
   const orchestrator = new RealEstateOrchestrator();
 
   orchestrator.on('cycle:complete', (data) => {
-    console.log(`\n📊 Cycle Stats:`);
+    console.log(`\nðŸ“Š Cycle Stats:`);
     console.log(`   Run: #${data.runCount}`);
     console.log(`   Duration: ${data.duration}s`);
     console.log(`   Timestamp: ${data.timestamp.toISOString()}`);
   });
 
   orchestrator.on('cycle:error', (error) => {
-    console.error('\n🚨 Cycle Error:', error);
+    console.error('\nðŸš¨ Cycle Error:', error);
     process.exit(1);
   });
 

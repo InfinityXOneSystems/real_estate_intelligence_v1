@@ -11,7 +11,13 @@ export interface DistressedProperty {
   zip: string;
 
   // Property details
-  property_type: "single_family" | "multi_family" | "condo" | "townhouse" | "land" | "commercial";
+  property_type:
+    | 'single_family'
+    | 'multi_family'
+    | 'condo'
+    | 'townhouse'
+    | 'land'
+    | 'commercial';
   bedrooms?: number;
   bathrooms?: number;
   square_feet?: number;
@@ -28,7 +34,7 @@ export interface DistressedProperty {
   // Distress indicators
   distress_type: DistressType[];
   distress_score: number; // 0-100 (higher = more likely to sell)
-  urgency_level: "low" | "medium" | "high" | "critical";
+  urgency_level: 'low' | 'medium' | 'high' | 'critical';
 
   // Owner information
   owner_name?: string;
@@ -37,7 +43,7 @@ export interface DistressedProperty {
   owner_age?: number;
 
   // Distress signals
-  foreclosure_status?: "pre_foreclosure" | "auction" | "bank_owned" | "none";
+  foreclosure_status?: 'pre_foreclosure' | 'auction' | 'bank_owned' | 'none';
   foreclosure_date?: string;
   tax_lien?: boolean;
   tax_lien_amount?: number;
@@ -57,40 +63,53 @@ export interface DistressedProperty {
   last_updated: string;
 
   // Lead status
-  lead_status: "new" | "contacted" | "interested" | "negotiating" | "closed" | "lost";
+  lead_status:
+    | 'new'
+    | 'contacted'
+    | 'interested'
+    | 'negotiating'
+    | 'closed'
+    | 'lost';
   contact_attempts: number;
   last_contact?: string;
   notes?: string[];
 }
 
 export type DistressType =
-  | "foreclosure"
-  | "pre_foreclosure"
-  | "tax_lien"
-  | "divorce"
-  | "probate"
-  | "bankruptcy"
-  | "job_loss"
-  | "relocation"
-  | "medical_emergency"
-  | "hoarder"
-  | "fire_damage"
-  | "water_damage"
-  | "code_violations"
-  | "vacant"
-  | "inherited"
-  | "behind_on_payments"
-  | "upside_down_mortgage"
-  | "tired_landlord"
-  | "downsizing"
-  | "elderly_care"
-  | "death_in_family"
-  | "military_deployment";
+  | 'foreclosure'
+  | 'pre_foreclosure'
+  | 'tax_lien'
+  | 'divorce'
+  | 'probate'
+  | 'bankruptcy'
+  | 'job_loss'
+  | 'relocation'
+  | 'medical_emergency'
+  | 'hoarder'
+  | 'fire_damage'
+  | 'water_damage'
+  | 'code_violations'
+  | 'vacant'
+  | 'inherited'
+  | 'behind_on_payments'
+  | 'upside_down_mortgage'
+  | 'tired_landlord'
+  | 'downsizing'
+  | 'elderly_care'
+  | 'death_in_family'
+  | 'military_deployment';
 
 export interface SocialDistressIndicator {
-  type: "job_loss" | "divorce_filing" | "bankruptcy_mention" | "medical_issue" |
-        "relocation_post" | "financial_stress" | "property_complaint" | "moving_sale";
-  source: "facebook" | "linkedin" | "twitter" | "instagram" | "public_records";
+  type:
+    | 'job_loss'
+    | 'divorce_filing'
+    | 'bankruptcy_mention'
+    | 'medical_issue'
+    | 'relocation_post'
+    | 'financial_stress'
+    | 'property_complaint'
+    | 'moving_sale';
+  source: 'facebook' | 'linkedin' | 'twitter' | 'instagram' | 'public_records';
   confidence: number; // 0-1
   detected_at: string;
   evidence?: string;
@@ -135,8 +154,13 @@ export interface Investor {
   avoid_locations?: string[];
 
   // Investment style
-  investment_strategy: "fix_and_flip" | "buy_and_hold" | "wholesale" | "rental" | "development";
-  experience_level: "beginner" | "intermediate" | "expert";
+  investment_strategy:
+    | 'fix_and_flip'
+    | 'buy_and_hold'
+    | 'wholesale'
+    | 'rental'
+    | 'development';
+  experience_level: 'beginner' | 'intermediate' | 'expert';
 
   // Track record
   properties_purchased: number;
@@ -179,7 +203,7 @@ export interface PropertyInvestorMatch {
   property: DistressedProperty;
   investor: Investor;
   created_at: string;
-  status: "pending" | "sent" | "viewed" | "interested" | "passed" | "deal_made";
+  status: 'pending' | 'sent' | 'viewed' | 'interested' | 'passed' | 'deal_made';
 }
 
 export interface LeadScoringFactors {
@@ -240,7 +264,7 @@ export interface CrawlerConfig {
 
 export interface CrawlerSource {
   name: string;
-  type: "real_estate" | "public_records" | "social_media" | "investor_network";
+  type: 'real_estate' | 'public_records' | 'social_media' | 'investor_network';
   url: string;
   enabled: boolean;
   requires_auth: boolean;
@@ -285,9 +309,9 @@ export interface DailyReport {
 }
 
 export interface AISchedulerConfig {
-  voice_provider: "twilio" | "bland_ai" | "eleven_labs";
-  email_provider: "sendgrid" | "mailgun" | "smtp";
-  crm_provider: "google_sheets" | "hubspot" | "salesforce";
+  voice_provider: 'twilio' | 'bland_ai' | 'eleven_labs';
+  email_provider: 'sendgrid' | 'mailgun' | 'smtp';
+  crm_provider: 'google_sheets' | 'hubspot' | 'salesforce';
 
   // AI behavior
   voice_personality: string;
@@ -305,7 +329,7 @@ export interface AISchedulerConfig {
 export interface ContactAttempt {
   property_id: string;
   attempt_number: number;
-  method: "phone" | "email" | "sms" | "letter";
+  method: 'phone' | 'email' | 'sms' | 'letter';
   timestamp: string;
 
   // For calls
@@ -321,7 +345,7 @@ export interface ContactAttempt {
 
   // Outcome
   contact_reached: boolean;
-  interest_level?: "none" | "low" | "medium" | "high";
+  interest_level?: 'none' | 'low' | 'medium' | 'high';
   appointment_scheduled?: boolean;
   appointment_time?: string;
   next_action?: string;

@@ -54,9 +54,17 @@ export class CoinbaseSafetyWrapper {
   /**
    * Generate HMAC signature for Coinbase API authentication
    */
-  private generateSignature(timestamp: number, method: string, path: string, body: string = ''): string {
+  private generateSignature(
+    timestamp: number,
+    method: string,
+    path: string,
+    body: string = ''
+  ): string {
     const message = `${timestamp}${method}${path}${body}`;
-    return crypto.createHmac('sha256', this.secret).update(message).digest('hex');
+    return crypto
+      .createHmac('sha256', this.secret)
+      .update(message)
+      .digest('hex');
   }
 
   /**
@@ -80,7 +88,10 @@ export class CoinbaseSafetyWrapper {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const dailyTotal = this.transactionHistory
-      .filter((tx) => tx.timestamp >= today && ['completed', 'pending'].includes(tx.status))
+      .filter(
+        (tx) =>
+          tx.timestamp >= today && ['completed', 'pending'].includes(tx.status)
+      )
       .reduce((sum, tx) => sum + tx.amount, 0);
 
     if (dailyTotal + amount > this.limits.dailyLimit) {
@@ -96,7 +107,11 @@ export class CoinbaseSafetyWrapper {
     thisMonth.setDate(1);
     thisMonth.setHours(0, 0, 0, 0);
     const monthlyTotal = this.transactionHistory
-      .filter((tx) => tx.timestamp >= thisMonth && ['completed', 'pending'].includes(tx.status))
+      .filter(
+        (tx) =>
+          tx.timestamp >= thisMonth &&
+          ['completed', 'pending'].includes(tx.status)
+      )
       .reduce((sum, tx) => sum + tx.amount, 0);
 
     if (monthlyTotal + amount > this.limits.monthlyLimit) {
@@ -171,23 +186,33 @@ export class CoinbaseSafetyWrapper {
   /**
    * Buy cryptocurrency with safety checks
    */
-  async buyCrypto(accountId: string, amount: number, currency: string = 'USD'): Promise<any> {
-    console.log(`\n🔒 Safety Check: Buy $${amount} worth of crypto`);
+  async buyCrypto(
+    accountId: string,
+    amount: number,
+    currency: string = 'USD'
+  ): Promise<any> {
+    console.log(`\nðŸ”’ Safety Check: Buy $${amount} worth of crypto`);
 
     // Check limits
     const limitCheck = this.checkTransactionLimits(amount);
 
     if (!limitCheck.allowed) {
-      console.error(`❌ Transaction blocked: ${limitCheck.reason}`);
+      console.error(`âŒ Transaction blocked: ${limitCheck.reason}`);
       throw new Error(`Transaction blocked: ${limitCheck.reason}`);
     }
 
     if (limitCheck.requiresApproval) {
-      console.warn(`⚠️ Manual approval required for transaction over $${this.limits.requireApprovalAbove}`);
-      console.warn('   Set COINBASE_AUTO_APPROVE=true in .env to override (not recommended)');
+      console.warn(
+        `âš ï¸ Manual approval required for transaction over $${this.limits.requireApprovalAbove}`
+      );
+      console.warn(
+        '   Set COINBASE_AUTO_APPROVE=true in .env to override (not recommended)'
+      );
 
       if (process.env.COINBASE_AUTO_APPROVE !== 'true') {
-        throw new Error('Manual approval required. Transaction blocked for safety.');
+        throw new Error(
+          'Manual approval required. Transaction blocked for safety.'
+        );
       }
     }
 
@@ -200,7 +225,7 @@ export class CoinbaseSafetyWrapper {
     };
     this.transactionHistory.push(record);
 
-    console.log('✅ Safety checks passed. Executing transaction...');
+    console.log('âœ… Safety checks passed. Executing transaction...');
 
     // Execute transaction
     const timestamp = Math.floor(Date.now() / 1000);
@@ -235,7 +260,7 @@ export class CoinbaseSafetyWrapper {
       record.status = 'completed';
       record.transactionId = result.data?.id;
 
-      console.log(`✅ Transaction completed: ${record.transactionId}`);
+      console.log(`âœ… Transaction completed: ${record.transactionId}`);
 
       return result;
     } catch (error) {
@@ -262,11 +287,18 @@ export class CoinbaseSafetyWrapper {
     thisMonth.setHours(0, 0, 0, 0);
 
     const dailySpent = this.transactionHistory
-      .filter((tx) => tx.timestamp >= today && ['completed', 'pending'].includes(tx.status))
+      .filter(
+        (tx) =>
+          tx.timestamp >= today && ['completed', 'pending'].includes(tx.status)
+      )
       .reduce((sum, tx) => sum + tx.amount, 0);
 
     const monthlySpent = this.transactionHistory
-      .filter((tx) => tx.timestamp >= thisMonth && ['completed', 'pending'].includes(tx.status))
+      .filter(
+        (tx) =>
+          tx.timestamp >= thisMonth &&
+          ['completed', 'pending'].includes(tx.status)
+      )
       .reduce((sum, tx) => sum + tx.amount, 0);
 
     return {
@@ -282,7 +314,9 @@ export class CoinbaseSafetyWrapper {
    * Update safety limits (use carefully)
    */
   updateLimits(newLimits: Partial<TransactionLimit>): void {
-    console.warn('⚠️ Updating transaction limits. Ensure this is authorized.');
+    console.warn(
+      'âš ï¸ Updating transaction limits. Ensure this is authorized.'
+    );
     this.limits = { ...this.limits, ...newLimits };
     console.log('Updated limits:', this.limits);
   }
@@ -291,7 +325,9 @@ export class CoinbaseSafetyWrapper {
    * Get exchange rates (read-only, safe)
    */
   async getExchangeRates(currency: string = 'USD'): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/v2/exchange-rates?currency=${currency}`);
+    const response = await fetch(
+      `${this.baseUrl}/v2/exchange-rates?currency=${currency}`
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to fetch exchange rates: ${response.statusText}`);
@@ -304,7 +340,9 @@ export class CoinbaseSafetyWrapper {
    * Get spot price for currency pair (read-only, safe)
    */
   async getSpotPrice(currencyPair: string = 'BTC-USD'): Promise<any> {
-    const response = await fetch(`${this.baseUrl}/v2/prices/${currencyPair}/spot`);
+    const response = await fetch(
+      `${this.baseUrl}/v2/prices/${currencyPair}/spot`
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to fetch spot price: ${response.statusText}`);

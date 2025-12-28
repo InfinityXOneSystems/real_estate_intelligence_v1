@@ -10,11 +10,23 @@
  * - Scraper targeting
  */
 
-import { heatmapSystem, type HeatmapPoint } from "./predictive-heatmap-system";
-import { analysisEngine, type MarketStatistics } from "./statistical-analysis-engine";
-import { socialCrawler, type SocialLead } from "../crawlers/social-media-crawler";
-import { govCrawler, type GovernmentRecord } from "../crawlers/government-data-crawler";
-import { getAllDistressKeywords, getKeywordScore } from "../data/distress-keywords-expanded";
+import { heatmapSystem, type HeatmapPoint } from './predictive-heatmap-system';
+import {
+  analysisEngine,
+  type MarketStatistics,
+} from './statistical-analysis-engine';
+import {
+  socialCrawler,
+  type SocialLead,
+} from '../crawlers/social-media-crawler';
+import {
+  govCrawler,
+  type GovernmentRecord,
+} from '../crawlers/government-data-crawler';
+import {
+  getAllDistressKeywords,
+  getKeywordScore,
+} from '../data/distress-keywords-expanded';
 
 export interface IntelligenceReport {
   timestamp: string;
@@ -41,7 +53,7 @@ export interface IntelligenceReport {
   };
   recommendations: string[];
   targetingStrategy: {
-    priority: "critical" | "high" | "medium" | "low";
+    priority: 'critical' | 'high' | 'medium' | 'low';
     scalingFactor: number; // multiplier for marketing spend
     recommendedChannels: string[];
     estimatedMonthlyLeads: number;
@@ -84,19 +96,24 @@ export class IntelligenceOrchestrator {
 
     // Get social leads
     const socialLeads = socialCrawler.getLeadsByCity(city);
-    const highUrgencySocial = socialLeads.filter((l) => l.desperation_score > 70).length;
+    const highUrgencySocial = socialLeads.filter(
+      (l) => l.desperation_score > 70
+    ).length;
     const avgSocialScore =
       socialLeads.length > 0
-        ? socialLeads.reduce((sum, l) => sum + l.desperation_score, 0) / socialLeads.length
+        ? socialLeads.reduce((sum, l) => sum + l.desperation_score, 0) /
+          socialLeads.length
         : 0;
 
     // Get government records
     const govRecords = govCrawler.getRecordsByCity(city);
     const govStats = {
-      foreclosures: govRecords.filter((r) => r.type === "foreclosure_filing").length,
-      taxLiens: govRecords.filter((r) => r.type === "tax_lien").length,
-      codeViolations: govRecords.filter((r) => r.type === "code_violation").length,
-      auctionItems: govRecords.filter((r) => r.type === "auction").length,
+      foreclosures: govRecords.filter((r) => r.type === 'foreclosure_filing')
+        .length,
+      taxLiens: govRecords.filter((r) => r.type === 'tax_lien').length,
+      codeViolations: govRecords.filter((r) => r.type === 'code_violation')
+        .length,
+      auctionItems: govRecords.filter((r) => r.type === 'auction').length,
     };
 
     // Generate recommendations
@@ -116,7 +133,7 @@ export class IntelligenceOrchestrator {
     );
 
     // Get hotspot zip code
-    const zipCode = hotspots.length > 0 ? hotspots[0].zipCode : "multiple";
+    const zipCode = hotspots.length > 0 ? hotspots[0].zipCode : 'multiple';
 
     const report: IntelligenceReport = {
       timestamp: new Date().toISOString(),
@@ -148,17 +165,17 @@ export class IntelligenceOrchestrator {
    */
   async generateTreasureCoastIntelligence(): Promise<ComprehensiveIntelligence> {
     const treasureCoastCities = [
-      "Port St. Lucie",
-      "Fort Pierce",
-      "Stuart",
-      "West Palm Beach",
-      "Jupiter",
-      "Okeechobee",
-      "Miami",
-      "Vero Beach",
-      "Delray Beach",
-      "Pompano Beach",
-      "Tampa",
+      'Port St. Lucie',
+      'Fort Pierce',
+      'Stuart',
+      'West Palm Beach',
+      'Jupiter',
+      'Okeechobee',
+      'Miami',
+      'Vero Beach',
+      'Delray Beach',
+      'Pompano Beach',
+      'Tampa',
     ];
 
     // Generate reports for all markets
@@ -173,19 +190,28 @@ export class IntelligenceOrchestrator {
     }
 
     // Get critical opportunities
-    const criticalOpportunities = this.extractCriticalOpportunities(marketReports);
+    const criticalOpportunities =
+      this.extractCriticalOpportunities(marketReports);
 
     // Get keyword matching results
     const keywordResults = this.analyzeKeywordMatches(marketReports);
 
     // Summarize Treasure Coast
     const summary = {
-      totalDistressedZipCodes: marketReports.filter((r) => r.distressScore > 60).length,
+      totalDistressedZipCodes: marketReports.filter((r) => r.distressScore > 60)
+        .length,
       highPriorityMarkets: marketReports
-        .filter((r) => r.targetingStrategy.priority === "critical" || r.targetingStrategy.priority === "high")
+        .filter(
+          (r) =>
+            r.targetingStrategy.priority === 'critical' ||
+            r.targetingStrategy.priority === 'high'
+        )
         .map((r) => r.city),
       estimatedOpportunities: marketReports.reduce(
-        (sum, r) => sum + (r.socialLeads.total + Object.values(r.governmentRecords).reduce((a, b) => a + b, 0)),
+        (sum, r) =>
+          sum +
+          (r.socialLeads.total +
+            Object.values(r.governmentRecords).reduce((a, b) => a + b, 0)),
         0
       ),
       totalPotentialValue: this.calculateTotalPotentialValue(marketReports),
@@ -193,7 +219,9 @@ export class IntelligenceOrchestrator {
 
     return {
       treasureCoastSummary: summary,
-      marketReports: marketReports.sort((a, b) => b.distressScore - a.distressScore),
+      marketReports: marketReports.sort(
+        (a, b) => b.distressScore - a.distressScore
+      ),
       criticalOpportunities,
       keywordMatchingResults: keywordResults,
     };
@@ -212,15 +240,23 @@ export class IntelligenceOrchestrator {
     const recommendations: string[] = [];
 
     if (distressScore > 75) {
-      recommendations.push("🔴 CRITICAL: Highest priority market for acquisition efforts");
+      recommendations.push(
+        'ðŸ”´ CRITICAL: Highest priority market for acquisition efforts'
+      );
     } else if (distressScore > 60) {
-      recommendations.push("🟠 HIGH: Strong market opportunity - significant distress indicators");
+      recommendations.push(
+        'ðŸŸ  HIGH: Strong market opportunity - significant distress indicators'
+      );
     } else if (distressScore > 40) {
-      recommendations.push("🟡 MEDIUM: Moderate opportunity - strategic focus area");
+      recommendations.push(
+        'ðŸŸ¡ MEDIUM: Moderate opportunity - strategic focus area'
+      );
     }
 
     if (hotspotIntensity > 80) {
-      recommendations.push(`Geographic hotspot identified in ${city} - concentrate marketing efforts here`);
+      recommendations.push(
+        `Geographic hotspot identified in ${city} - concentrate marketing efforts here`
+      );
     }
 
     if (socialLeadCount > 5) {
@@ -236,7 +272,9 @@ export class IntelligenceOrchestrator {
     }
 
     if (socialLeadCount > 0 && govRecordCount > 0) {
-      recommendations.push("Multi-source validation: Both social and government data confirm high opportunity");
+      recommendations.push(
+        'Multi-source validation: Both social and government data confirm high opportunity'
+      );
     }
 
     return recommendations;
@@ -250,31 +288,42 @@ export class IntelligenceOrchestrator {
     hotspotIntensity: number,
     leadCount: number
   ): {
-    priority: "critical" | "high" | "medium" | "low";
+    priority: 'critical' | 'high' | 'medium' | 'low';
     scalingFactor: number;
     recommendedChannels: string[];
     estimatedMonthlyLeads: number;
   } {
-    let priority: "critical" | "high" | "medium" | "low" = "low";
+    let priority: 'critical' | 'high' | 'medium' | 'low' = 'low';
     let scalingFactor = 1;
     const recommendedChannels: string[] = [];
 
     if (distressScore > 75 && hotspotIntensity > 75) {
-      priority = "critical";
+      priority = 'critical';
       scalingFactor = 3;
-      recommendedChannels.push("Direct Mail", "Social Media", "Phone Outreach", "Google Ads", "Local TV");
+      recommendedChannels.push(
+        'Direct Mail',
+        'Social Media',
+        'Phone Outreach',
+        'Google Ads',
+        'Local TV'
+      );
     } else if (distressScore > 60 || hotspotIntensity > 60) {
-      priority = "high";
+      priority = 'high';
       scalingFactor = 2.5;
-      recommendedChannels.push("Social Media", "Google Ads", "Direct Mail", "Facebook Ads");
+      recommendedChannels.push(
+        'Social Media',
+        'Google Ads',
+        'Direct Mail',
+        'Facebook Ads'
+      );
     } else if (distressScore > 40 || hotspotIntensity > 40) {
-      priority = "medium";
+      priority = 'medium';
       scalingFactor = 1.5;
-      recommendedChannels.push("Google Ads", "Facebook Ads", "Email Marketing");
+      recommendedChannels.push('Google Ads', 'Facebook Ads', 'Email Marketing');
     } else {
-      priority = "low";
+      priority = 'low';
       scalingFactor = 0.8;
-      recommendedChannels.push("Email Marketing", "Organic SEO");
+      recommendedChannels.push('Email Marketing', 'Organic SEO');
     }
 
     // Estimate monthly leads based on data points
@@ -292,9 +341,7 @@ export class IntelligenceOrchestrator {
   /**
    * Extract critical opportunities requiring immediate action
    */
-  private extractCriticalOpportunities(
-    reports: IntelligenceReport[]
-  ): {
+  private extractCriticalOpportunities(reports: IntelligenceReport[]): {
     address: string;
     source: string;
     immediateAction: string;
@@ -322,9 +369,9 @@ export class IntelligenceOrchestrator {
     const urgentSocial = socialCrawler.getHighUrgencyLeads(80);
     for (const lead of urgentSocial.slice(0, 5)) {
       opportunities.push({
-        address: lead.propertyAddress || lead.location || "TBD",
+        address: lead.propertyAddress || lead.location || 'TBD',
         source: `Social Media (${lead.source})`,
-        immediateAction: `DIRECT OUTREACH: ${lead.action_required} - ${lead.signal_types.join(", ")}`,
+        immediateAction: `DIRECT OUTREACH: ${lead.action_required} - ${lead.signal_types.join(', ')}`,
         estimatedValue: 0, // Estimated after property research
       });
     }
@@ -340,7 +387,10 @@ export class IntelligenceOrchestrator {
     occurrences: number;
     confidence: number;
   }[] {
-    const keywordMatches = new Map<string, { occurrences: number; confidence: number }>();
+    const keywordMatches = new Map<
+      string,
+      { occurrences: number; confidence: number }
+    >();
 
     // Get all distress keywords
     const allKeywords = getAllDistressKeywords();
@@ -349,7 +399,10 @@ export class IntelligenceOrchestrator {
     for (const lead of socialCrawler.exportLeads()) {
       for (const keyword of allKeywords) {
         if (lead.content.toLowerCase().includes(keyword.toLowerCase())) {
-          const existing = keywordMatches.get(keyword) || { occurrences: 0, confidence: 0 };
+          const existing = keywordMatches.get(keyword) || {
+            occurrences: 0,
+            confidence: 0,
+          };
           existing.occurrences++;
           existing.confidence = Math.min(
             100,

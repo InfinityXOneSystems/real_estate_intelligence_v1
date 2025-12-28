@@ -7,35 +7,35 @@
  * ============================================================================
  */
 
-import cron from "node-cron";
-import winston from "winston";
-import { runFullCycle } from "./agent";
-import * as fs from "fs";
-import * as path from "path";
+import cron from 'node-cron';
+import winston from 'winston';
+import { runFullCycle } from './agent';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
 
-const LOG_DIR = path.join(process.cwd(), "logs", "autonomous");
+const LOG_DIR = path.join(process.cwd(), 'logs', 'autonomous');
 const SCHEDULE_CONFIG = {
   // Full diagnostic cycle every 6 hours
-  fullCycle: "0 */6 * * *",
+  fullCycle: '0 */6 * * *',
 
   // Quick health check every hour
-  healthCheck: "0 * * * *",
+  healthCheck: '0 * * * *',
 
   // Dependency audit daily at 2 AM
-  dependencyAudit: "0 2 * * *",
+  dependencyAudit: '0 2 * * *',
 
   // Code quality check every 4 hours
-  codeQuality: "0 */4 * * *",
+  codeQuality: '0 */4 * * *',
 
   // Performance optimization analysis twice daily
-  performanceAnalysis: "0 6,18 * * *",
+  performanceAnalysis: '0 6,18 * * *',
 
   // Cleanup old logs weekly on Sunday at 3 AM
-  logCleanup: "0 3 * * 0",
+  logCleanup: '0 3 * * 0',
 };
 
 // Ensure log directory exists
@@ -48,17 +48,17 @@ if (!fs.existsSync(LOG_DIR)) {
 // ============================================================================
 
 const logger = winston.createLogger({
-  level: "info",
+  level: 'info',
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
     winston.format.splat(),
     winston.format.json()
   ),
-  defaultMeta: { service: "autonomous-scheduler" },
+  defaultMeta: { service: 'autonomous-scheduler' },
   transports: [
     new winston.transports.File({
-      filename: path.join(LOG_DIR, "scheduler.log"),
+      filename: path.join(LOG_DIR, 'scheduler.log'),
       maxsize: 10485760,
       maxFiles: 10,
     }),
@@ -84,16 +84,16 @@ const logger = winston.createLogger({
  */
 function scheduleFullCycle(): void {
   const task = cron.schedule(SCHEDULE_CONFIG.fullCycle, async () => {
-    logger.info("🔄 Starting scheduled FULL CYCLE...");
+    logger.info('ðŸ”„ Starting scheduled FULL CYCLE...');
     try {
       await runFullCycle();
-      logger.info("✅ FULL CYCLE completed successfully");
+      logger.info('âœ… FULL CYCLE completed successfully');
     } catch (error) {
-      logger.error(`❌ FULL CYCLE failed: ${(error as Error).message}`);
+      logger.error(`âŒ FULL CYCLE failed: ${(error as Error).message}`);
     }
   });
 
-  logger.info(`📅 Full Cycle scheduled: ${SCHEDULE_CONFIG.fullCycle}`);
+  logger.info(`ðŸ“… Full Cycle scheduled: ${SCHEDULE_CONFIG.fullCycle}`);
 }
 
 /**
@@ -102,19 +102,17 @@ function scheduleFullCycle(): void {
  */
 function scheduleHealthCheck(): void {
   const task = cron.schedule(SCHEDULE_CONFIG.healthCheck, async () => {
-    logger.info("🏥 Starting scheduled HEALTH CHECK...");
+    logger.info('ðŸ¥ Starting scheduled HEALTH CHECK...');
     try {
       // Quick health checks
-      logger.info("Checking critical systems...");
-      logger.info("✅ HEALTH CHECK completed");
+      logger.info('Checking critical systems...');
+      logger.info('âœ… HEALTH CHECK completed');
     } catch (error) {
-      logger.error(
-        `❌ HEALTH CHECK failed: ${(error as Error).message}`
-      );
+      logger.error(`âŒ HEALTH CHECK failed: ${(error as Error).message}`);
     }
   });
 
-  logger.info(`📅 Health Check scheduled: ${SCHEDULE_CONFIG.healthCheck}`);
+  logger.info(`ðŸ“… Health Check scheduled: ${SCHEDULE_CONFIG.healthCheck}`);
 }
 
 /**
@@ -123,20 +121,18 @@ function scheduleHealthCheck(): void {
  */
 function scheduleDependencyAudit(): void {
   const task = cron.schedule(SCHEDULE_CONFIG.dependencyAudit, async () => {
-    logger.info("📦 Starting scheduled DEPENDENCY AUDIT...");
+    logger.info('ðŸ“¦ Starting scheduled DEPENDENCY AUDIT...');
     try {
-      logger.info("Checking for security vulnerabilities...");
-      logger.info("Checking for outdated packages...");
-      logger.info("✅ DEPENDENCY AUDIT completed");
+      logger.info('Checking for security vulnerabilities...');
+      logger.info('Checking for outdated packages...');
+      logger.info('âœ… DEPENDENCY AUDIT completed');
     } catch (error) {
-      logger.error(
-        `❌ DEPENDENCY AUDIT failed: ${(error as Error).message}`
-      );
+      logger.error(`âŒ DEPENDENCY AUDIT failed: ${(error as Error).message}`);
     }
   });
 
   logger.info(
-    `📅 Dependency Audit scheduled: ${SCHEDULE_CONFIG.dependencyAudit}`
+    `ðŸ“… Dependency Audit scheduled: ${SCHEDULE_CONFIG.dependencyAudit}`
   );
 }
 
@@ -146,19 +142,19 @@ function scheduleDependencyAudit(): void {
  */
 function scheduleCodeQualityAnalysis(): void {
   const task = cron.schedule(SCHEDULE_CONFIG.codeQuality, async () => {
-    logger.info("🔍 Starting scheduled CODE QUALITY ANALYSIS...");
+    logger.info('ðŸ” Starting scheduled CODE QUALITY ANALYSIS...');
     try {
-      logger.info("Running TypeScript type checking...");
-      logger.info("Running ESLint analysis...");
-      logger.info("✅ CODE QUALITY ANALYSIS completed");
+      logger.info('Running TypeScript type checking...');
+      logger.info('Running ESLint analysis...');
+      logger.info('âœ… CODE QUALITY ANALYSIS completed');
     } catch (error) {
       logger.error(
-        `❌ CODE QUALITY ANALYSIS failed: ${(error as Error).message}`
+        `âŒ CODE QUALITY ANALYSIS failed: ${(error as Error).message}`
       );
     }
   });
 
-  logger.info(`📅 Code Quality scheduled: ${SCHEDULE_CONFIG.codeQuality}`);
+  logger.info(`ðŸ“… Code Quality scheduled: ${SCHEDULE_CONFIG.codeQuality}`);
 }
 
 /**
@@ -167,23 +163,21 @@ function scheduleCodeQualityAnalysis(): void {
  */
 function schedulePerformanceOptimization(): void {
   const task = cron.schedule(SCHEDULE_CONFIG.performanceAnalysis, async () => {
-    logger.info(
-      "⚡ Starting scheduled PERFORMANCE OPTIMIZATION ANALYSIS..."
-    );
+    logger.info('âš¡ Starting scheduled PERFORMANCE OPTIMIZATION ANALYSIS...');
     try {
-      logger.info("Analyzing build size...");
-      logger.info("Profiling memory usage...");
-      logger.info("Checking cache efficiency...");
-      logger.info("✅ PERFORMANCE OPTIMIZATION ANALYSIS completed");
+      logger.info('Analyzing build size...');
+      logger.info('Profiling memory usage...');
+      logger.info('Checking cache efficiency...');
+      logger.info('âœ… PERFORMANCE OPTIMIZATION ANALYSIS completed');
     } catch (error) {
       logger.error(
-        `❌ PERFORMANCE OPTIMIZATION ANALYSIS failed: ${(error as Error).message}`
+        `âŒ PERFORMANCE OPTIMIZATION ANALYSIS failed: ${(error as Error).message}`
       );
     }
   });
 
   logger.info(
-    `📅 Performance Analysis scheduled: ${SCHEDULE_CONFIG.performanceAnalysis}`
+    `ðŸ“… Performance Analysis scheduled: ${SCHEDULE_CONFIG.performanceAnalysis}`
   );
 }
 
@@ -193,7 +187,7 @@ function schedulePerformanceOptimization(): void {
  */
 function scheduleLogCleanup(): void {
   const task = cron.schedule(SCHEDULE_CONFIG.logCleanup, async () => {
-    logger.info("🧹 Starting scheduled LOG CLEANUP...");
+    logger.info('ðŸ§¹ Starting scheduled LOG CLEANUP...');
     try {
       const files = fs.readdirSync(LOG_DIR);
       let cleaned = 0;
@@ -211,15 +205,13 @@ function scheduleLogCleanup(): void {
         }
       });
 
-      logger.info(`✅ LOG CLEANUP completed (${cleaned} files removed)`);
+      logger.info(`âœ… LOG CLEANUP completed (${cleaned} files removed)`);
     } catch (error) {
-      logger.error(
-        `❌ LOG CLEANUP failed: ${(error as Error).message}`
-      );
+      logger.error(`âŒ LOG CLEANUP failed: ${(error as Error).message}`);
     }
   });
 
-  logger.info(`📅 Log Cleanup scheduled: ${SCHEDULE_CONFIG.logCleanup}`);
+  logger.info(`ðŸ“… Log Cleanup scheduled: ${SCHEDULE_CONFIG.logCleanup}`);
 }
 
 // ============================================================================
@@ -228,11 +220,11 @@ function scheduleLogCleanup(): void {
 
 function initializeScheduler(): void {
   logger.info(
-    "════════════════════════════════════════════════════════════════"
+    'â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•'
   );
-  logger.info("🤖 AUTONOMOUS SCHEDULER INITIALIZING");
+  logger.info('ðŸ¤– AUTONOMOUS SCHEDULER INITIALIZING');
   logger.info(
-    "════════════════════════════════════════════════════════════════"
+    'â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•'
   );
 
   // Schedule all tasks
@@ -243,39 +235,39 @@ function initializeScheduler(): void {
   schedulePerformanceOptimization();
   scheduleLogCleanup();
 
-  logger.info("✅ All scheduled tasks configured");
-  logger.info("📊 System Status: RUNNING - Autonomous Mode Active");
+  logger.info('âœ… All scheduled tasks configured');
+  logger.info('ðŸ“Š System Status: RUNNING - Autonomous Mode Active');
   logger.info(
-    "════════════════════════════════════════════════════════════════"
+    'â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•'
   );
 
   // Display next scheduled tasks
-  logger.info("");
-  logger.info("📋 NEXT SCHEDULED OPERATIONS:");
-  logger.info(`   • Full Cycle:              ${SCHEDULE_CONFIG.fullCycle}`);
-  logger.info(`   • Health Check:            ${SCHEDULE_CONFIG.healthCheck}`);
+  logger.info('');
+  logger.info('ðŸ“‹ NEXT SCHEDULED OPERATIONS:');
+  logger.info(`   â€¢ Full Cycle:              ${SCHEDULE_CONFIG.fullCycle}`);
+  logger.info(`   â€¢ Health Check:            ${SCHEDULE_CONFIG.healthCheck}`);
   logger.info(
-    `   • Dependency Audit:        ${SCHEDULE_CONFIG.dependencyAudit}`
+    `   â€¢ Dependency Audit:        ${SCHEDULE_CONFIG.dependencyAudit}`
   );
-  logger.info(`   • Code Quality:            ${SCHEDULE_CONFIG.codeQuality}`);
+  logger.info(`   â€¢ Code Quality:            ${SCHEDULE_CONFIG.codeQuality}`);
   logger.info(
-    `   • Performance Analysis:    ${SCHEDULE_CONFIG.performanceAnalysis}`
+    `   â€¢ Performance Analysis:    ${SCHEDULE_CONFIG.performanceAnalysis}`
   );
-  logger.info(`   • Log Cleanup:             ${SCHEDULE_CONFIG.logCleanup}`);
-  logger.info("");
+  logger.info(`   â€¢ Log Cleanup:             ${SCHEDULE_CONFIG.logCleanup}`);
+  logger.info('');
 }
 
 // ============================================================================
 // GRACEFUL SHUTDOWN
 // ============================================================================
 
-process.on("SIGINT", () => {
-  logger.info("🛑 Shutting down scheduler gracefully...");
+process.on('SIGINT', () => {
+  logger.info('ðŸ›‘ Shutting down scheduler gracefully...');
   process.exit(0);
 });
 
-process.on("SIGTERM", () => {
-  logger.info("🛑 Termination signal received. Shutting down...");
+process.on('SIGTERM', () => {
+  logger.info('ðŸ›‘ Termination signal received. Shutting down...');
   process.exit(0);
 });
 
@@ -287,14 +279,15 @@ if (require.main === module) {
   initializeScheduler();
 
   // Keep the process alive
-  setInterval(() => {
-    // Heartbeat every 5 minutes
-    logger.debug(
-      "Scheduler is running... (Timestamp: " +
-      new Date().toISOString() +
-      ")"
-    );
-  }, 5 * 60 * 1000);
+  setInterval(
+    () => {
+      // Heartbeat every 5 minutes
+      logger.debug(
+        'Scheduler is running... (Timestamp: ' + new Date().toISOString() + ')'
+      );
+    },
+    5 * 60 * 1000
+  );
 }
 
 export { initializeScheduler };

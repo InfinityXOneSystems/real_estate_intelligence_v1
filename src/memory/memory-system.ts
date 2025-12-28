@@ -3,9 +3,9 @@
  * Enables persistent learning, pattern recognition, and contextual decision-making
  */
 
-import fs from "fs-extra";
-import path from "path";
-import crypto from "crypto";
+import fs from 'fs-extra';
+import path from 'path';
+import crypto from 'crypto';
 
 /**
  * Memory Types
@@ -24,30 +24,30 @@ export interface MemoryEntry {
 }
 
 export type MemoryType =
-  | "interaction"
-  | "learning"
-  | "pattern"
-  | "decision"
-  | "outcome"
-  | "seller_profile"
-  | "property_insight"
-  | "market_trend"
-  | "agent_performance"
-  | "negotiation_strategy";
+  | 'interaction'
+  | 'learning'
+  | 'pattern'
+  | 'decision'
+  | 'outcome'
+  | 'seller_profile'
+  | 'property_insight'
+  | 'market_trend'
+  | 'agent_performance'
+  | 'negotiation_strategy';
 
 export type MemoryCategory =
-  | "short_term"
-  | "medium_term"
-  | "long_term"
-  | "episodic"
-  | "semantic"
-  | "procedural";
+  | 'short_term'
+  | 'medium_term'
+  | 'long_term'
+  | 'episodic'
+  | 'semantic'
+  | 'procedural';
 
 /**
  * Interaction Memory - Records what happened
  */
 export interface InteractionMemory extends MemoryEntry {
-  type: "interaction";
+  type: 'interaction';
   content: {
     propertyId: string;
     seller?: {
@@ -57,14 +57,14 @@ export interface InteractionMemory extends MemoryEntry {
     };
     agentId: string;
     actionType:
-      | "contact"
-      | "negotiation"
-      | "viewing"
-      | "offer"
-      | "deal_closed"
-      | "rejected";
+      | 'contact'
+      | 'negotiation'
+      | 'viewing'
+      | 'offer'
+      | 'deal_closed'
+      | 'rejected';
     details: Record<string, any>;
-    outcome: "success" | "pending" | "failed" | "converted";
+    outcome: 'success' | 'pending' | 'failed' | 'converted';
   };
 }
 
@@ -72,11 +72,11 @@ export interface InteractionMemory extends MemoryEntry {
  * Learning Memory - Insights extracted from interactions
  */
 export interface LearningMemory extends MemoryEntry {
-  type: "learning";
+  type: 'learning';
   content: {
     lesson: string;
     source: string; // Which interaction led to this learning
-    applicability: "universal" | "seller_type" | "market" | "agent";
+    applicability: 'universal' | 'seller_type' | 'market' | 'agent';
     confidence: number; // 0-1
     examples: string[];
   };
@@ -86,7 +86,7 @@ export interface LearningMemory extends MemoryEntry {
  * Pattern Memory - Recurring patterns discovered
  */
 export interface PatternMemory extends MemoryEntry {
-  type: "pattern";
+  type: 'pattern';
   content: {
     pattern: string;
     frequency: number;
@@ -101,14 +101,14 @@ export interface PatternMemory extends MemoryEntry {
  * Decision Memory - How decisions were made and their results
  */
 export interface DecisionMemory extends MemoryEntry {
-  type: "decision";
+  type: 'decision';
   content: {
     decision: string;
     context: Record<string, any>;
     options_considered: string[];
     chosen_option: string;
     reasoning: string;
-    outcome: "successful" | "partially_successful" | "unsuccessful";
+    outcome: 'successful' | 'partially_successful' | 'unsuccessful';
     outcome_metrics: Record<string, number>;
     learnedFor: string; // What to improve next time
   };
@@ -118,16 +118,16 @@ export interface DecisionMemory extends MemoryEntry {
  * Seller Profile Memory - Detailed understanding of seller psychology
  */
 export interface SellerProfileMemory extends MemoryEntry {
-  type: "seller_profile";
+  type: 'seller_profile';
   content: {
     sellerId: string;
     name: string;
     contact: { email: string; phone: string };
     desperation_level: number; // 0-100
     motivation_drivers: string[];
-    communication_preference: "email" | "phone" | "sms" | "voice";
+    communication_preference: 'email' | 'phone' | 'sms' | 'voice';
     best_contact_time: string; // e.g., "9 AM - 11 AM"
-    negotiation_style: "aggressive" | "moderate" | "conservative";
+    negotiation_style: 'aggressive' | 'moderate' | 'conservative';
     price_sensitivity: number; // How likely to reduce price
     responsiveness: number; // 0-1
     conversion_likelihood: number; // 0-1
@@ -142,13 +142,13 @@ export interface SellerProfileMemory extends MemoryEntry {
  * Property Insight Memory - Deep understanding of properties
  */
 export interface PropertyInsightMemory extends MemoryEntry {
-  type: "property_insight";
+  type: 'property_insight';
   content: {
     propertyId: string;
     address: string;
-    market_position: "hot" | "warm" | "cold";
+    market_position: 'hot' | 'warm' | 'cold';
     days_available: number;
-    price_trend: "rising" | "stable" | "falling";
+    price_trend: 'rising' | 'stable' | 'falling';
     buyer_interest_level: number; // 0-100
     competitive_properties: string[];
     unique_features: string[];
@@ -165,11 +165,11 @@ export interface PropertyInsightMemory extends MemoryEntry {
  * Market Trend Memory - Understanding of market dynamics
  */
 export interface MarketTrendMemory extends MemoryEntry {
-  type: "market_trend";
+  type: 'market_trend';
   content: {
     market: string; // e.g., "Port St. Lucie, FL"
     trend: string; // What's changing
-    direction: "positive" | "negative" | "stable";
+    direction: 'positive' | 'negative' | 'stable';
     magnitude: number; // How much change
     duration: string; // How long trend has existed
     affected_property_types: string[];
@@ -184,14 +184,14 @@ export interface MarketTrendMemory extends MemoryEntry {
  * Agent Performance Memory - How agents perform
  */
 export interface AgentPerformanceMemory extends MemoryEntry {
-  type: "agent_performance";
+  type: 'agent_performance';
   content: {
     agentId: string;
     agentName: string;
     metric: string; // e.g., "deal_closure_rate", "negotiation_success"
     value: number;
     benchmark: number;
-    trend: "improving" | "stable" | "declining";
+    trend: 'improving' | 'stable' | 'declining';
     strengths: string[];
     weaknesses: string[];
     specialties: string[];
@@ -204,7 +204,7 @@ export interface AgentPerformanceMemory extends MemoryEntry {
  * Negotiation Strategy Memory - What works in negotiations
  */
 export interface NegotiationStrategyMemory extends MemoryEntry {
-  type: "negotiation_strategy";
+  type: 'negotiation_strategy';
   content: {
     strategy_name: string;
     situation: string; // When to use
@@ -213,7 +213,7 @@ export interface NegotiationStrategyMemory extends MemoryEntry {
     typical_outcome: Record<string, any>;
     seller_type_effectiveness: Record<string, number>;
     time_to_success: string; // e.g., "2-3 days"
-    risk_level: "low" | "medium" | "high";
+    risk_level: 'low' | 'medium' | 'high';
     prerequisites: string[];
     common_obstacles: string[];
     recommended_follow_up: string;
@@ -230,7 +230,7 @@ export class MemorySystem {
   private maxShortTermSize: number = 1000;
   private accessLog: Array<{ id: string; timestamp: Date }> = [];
 
-  constructor(basePath: string = "./memory") {
+  constructor(basePath: string = './memory') {
     this.memoryPath = basePath;
     this.ensureMemoryDirectory();
     this.loadMemory();
@@ -242,11 +242,11 @@ export class MemorySystem {
   private ensureMemoryDirectory(): void {
     const dirs = [
       this.memoryPath,
-      path.join(this.memoryPath, "short-term"),
-      path.join(this.memoryPath, "long-term"),
-      path.join(this.memoryPath, "patterns"),
-      path.join(this.memoryPath, "learnings"),
-      path.join(this.memoryPath, "access-logs"),
+      path.join(this.memoryPath, 'short-term'),
+      path.join(this.memoryPath, 'long-term'),
+      path.join(this.memoryPath, 'patterns'),
+      path.join(this.memoryPath, 'learnings'),
+      path.join(this.memoryPath, 'access-logs'),
     ];
 
     dirs.forEach((dir) => {
@@ -260,7 +260,10 @@ export class MemorySystem {
    * Store an interaction
    */
   async recordInteraction(
-    data: Omit<InteractionMemory, "id" | "timestamp" | "relevanceScore" | "accessCount" | "lastAccessed">
+    data: Omit<
+      InteractionMemory,
+      'id' | 'timestamp' | 'relevanceScore' | 'accessCount' | 'lastAccessed'
+    >
   ): Promise<string> {
     const entry: InteractionMemory = {
       id: this.generateId(),
@@ -272,8 +275,8 @@ export class MemorySystem {
     } as InteractionMemory;
 
     this.shortTermMemory.set(entry.id, entry);
-    await this.saveToFile(entry, "short-term");
-    console.log(`✓ Interaction recorded: ${entry.id}`);
+    await this.saveToFile(entry, 'short-term');
+    console.log(`âœ“ Interaction recorded: ${entry.id}`);
 
     // Trigger learning extraction
     await this.extractLearnings(entry);
@@ -285,7 +288,10 @@ export class MemorySystem {
    * Record a learning from an interaction
    */
   async recordLearning(
-    data: Omit<LearningMemory, "id" | "timestamp" | "relevanceScore" | "accessCount" | "lastAccessed">
+    data: Omit<
+      LearningMemory,
+      'id' | 'timestamp' | 'relevanceScore' | 'accessCount' | 'lastAccessed'
+    >
   ): Promise<string> {
     const entry: LearningMemory = {
       id: this.generateId(),
@@ -297,8 +303,8 @@ export class MemorySystem {
     } as LearningMemory;
 
     this.longTermMemory.push(entry);
-    await this.saveToFile(entry, "learnings");
-    console.log(`✓ Learning recorded: ${entry.id}`);
+    await this.saveToFile(entry, 'learnings');
+    console.log(`âœ“ Learning recorded: ${entry.id}`);
 
     return entry.id;
   }
@@ -307,7 +313,10 @@ export class MemorySystem {
    * Record a pattern discovery
    */
   async recordPattern(
-    data: Omit<PatternMemory, "id" | "timestamp" | "relevanceScore" | "accessCount" | "lastAccessed">
+    data: Omit<
+      PatternMemory,
+      'id' | 'timestamp' | 'relevanceScore' | 'accessCount' | 'lastAccessed'
+    >
   ): Promise<string> {
     const entry: PatternMemory = {
       id: this.generateId(),
@@ -319,8 +328,8 @@ export class MemorySystem {
     } as PatternMemory;
 
     this.longTermMemory.push(entry);
-    await this.saveToFile(entry, "patterns");
-    console.log(`✓ Pattern recorded: ${entry.id}`);
+    await this.saveToFile(entry, 'patterns');
+    console.log(`âœ“ Pattern recorded: ${entry.id}`);
 
     return entry.id;
   }
@@ -329,7 +338,10 @@ export class MemorySystem {
    * Record a decision and its outcome
    */
   async recordDecision(
-    data: Omit<DecisionMemory, "id" | "timestamp" | "relevanceScore" | "accessCount" | "lastAccessed">
+    data: Omit<
+      DecisionMemory,
+      'id' | 'timestamp' | 'relevanceScore' | 'accessCount' | 'lastAccessed'
+    >
   ): Promise<string> {
     const entry: DecisionMemory = {
       id: this.generateId(),
@@ -341,8 +353,8 @@ export class MemorySystem {
     } as DecisionMemory;
 
     this.longTermMemory.push(entry);
-    await this.saveToFile(entry, "long-term");
-    console.log(`✓ Decision recorded: ${entry.id}`);
+    await this.saveToFile(entry, 'long-term');
+    console.log(`âœ“ Decision recorded: ${entry.id}`);
 
     return entry.id;
   }
@@ -351,7 +363,10 @@ export class MemorySystem {
    * Record or update seller profile
    */
   async recordSellerProfile(
-    data: Omit<SellerProfileMemory, "id" | "timestamp" | "relevanceScore" | "accessCount" | "lastAccessed">
+    data: Omit<
+      SellerProfileMemory,
+      'id' | 'timestamp' | 'relevanceScore' | 'accessCount' | 'lastAccessed'
+    >
   ): Promise<string> {
     // Check if profile already exists
     const existing = await this.findBySellerId(data.content.sellerId);
@@ -361,8 +376,8 @@ export class MemorySystem {
       this.longTermMemory = this.longTermMemory.map((m) =>
         m.id === existing.id ? updated : m
       );
-      await this.saveToFile(updated, "long-term");
-      console.log(`✓ Seller profile updated: ${existing.id}`);
+      await this.saveToFile(updated, 'long-term');
+      console.log(`âœ“ Seller profile updated: ${existing.id}`);
       return existing.id;
     }
 
@@ -376,8 +391,8 @@ export class MemorySystem {
     } as SellerProfileMemory;
 
     this.longTermMemory.push(entry);
-    await this.saveToFile(entry, "long-term");
-    console.log(`✓ Seller profile created: ${entry.id}`);
+    await this.saveToFile(entry, 'long-term');
+    console.log(`âœ“ Seller profile created: ${entry.id}`);
 
     return entry.id;
   }
@@ -386,7 +401,10 @@ export class MemorySystem {
    * Record property insight
    */
   async recordPropertyInsight(
-    data: Omit<PropertyInsightMemory, "id" | "timestamp" | "relevanceScore" | "accessCount" | "lastAccessed">
+    data: Omit<
+      PropertyInsightMemory,
+      'id' | 'timestamp' | 'relevanceScore' | 'accessCount' | 'lastAccessed'
+    >
   ): Promise<string> {
     const entry: PropertyInsightMemory = {
       id: this.generateId(),
@@ -398,8 +416,8 @@ export class MemorySystem {
     } as PropertyInsightMemory;
 
     this.longTermMemory.push(entry);
-    await this.saveToFile(entry, "long-term");
-    console.log(`✓ Property insight recorded: ${entry.id}`);
+    await this.saveToFile(entry, 'long-term');
+    console.log(`âœ“ Property insight recorded: ${entry.id}`);
 
     return entry.id;
   }
@@ -420,9 +438,9 @@ export class MemorySystem {
     const minRelevance = filters?.minRelevance || 0;
 
     // Search both short and long term
-    let results: MemoryEntry[] = Array.from(this.shortTermMemory.values()).concat(
-      this.longTermMemory
-    );
+    let results: MemoryEntry[] = Array.from(
+      this.shortTermMemory.values()
+    ).concat(this.longTermMemory);
 
     // Apply filters
     if (filters?.type) {
@@ -453,7 +471,7 @@ export class MemorySystem {
       m.lastAccessed = new Date();
     });
 
-    console.log(`✓ Recalled ${results.length} memories matching: "${query}"`);
+    console.log(`âœ“ Recalled ${results.length} memories matching: "${query}"`);
     return results.slice(0, limit);
   }
 
@@ -463,7 +481,7 @@ export class MemorySystem {
   async findSeller(sellerId: string): Promise<SellerProfileMemory | null> {
     const results = this.longTermMemory.filter(
       (m) =>
-        m.type === "seller_profile" &&
+        m.type === 'seller_profile' &&
         (m as SellerProfileMemory).content.sellerId === sellerId
     );
 
@@ -483,7 +501,7 @@ export class MemorySystem {
   async findProperty(address: string): Promise<PropertyInsightMemory | null> {
     const results = this.longTermMemory.filter(
       (m) =>
-        m.type === "property_insight" &&
+        m.type === 'property_insight' &&
         (m as PropertyInsightMemory).content.address.toLowerCase() ===
           address.toLowerCase()
     );
@@ -507,7 +525,7 @@ export class MemorySystem {
     const results = this.longTermMemory
       .filter(
         (m) =>
-          m.type === "negotiation_strategy" &&
+          m.type === 'negotiation_strategy' &&
           this.scoreRelevance(m, situation) > 0.5
       )
       .map((m) => ({
@@ -525,7 +543,7 @@ export class MemorySystem {
   async getMarketInsights(market: string): Promise<MarketTrendMemory[]> {
     const results = this.longTermMemory.filter(
       (m) =>
-        m.type === "market_trend" &&
+        m.type === 'market_trend' &&
         (m as MarketTrendMemory).content.market.toLowerCase() ===
           market.toLowerCase()
     );
@@ -540,10 +558,12 @@ export class MemorySystem {
   /**
    * Get agent performance data
    */
-  async getAgentPerformance(agentId: string): Promise<AgentPerformanceMemory[]> {
+  async getAgentPerformance(
+    agentId: string
+  ): Promise<AgentPerformanceMemory[]> {
     const results = this.longTermMemory.filter(
       (m) =>
-        m.type === "agent_performance" &&
+        m.type === 'agent_performance' &&
         (m as AgentPerformanceMemory).content.agentId === agentId
     );
 
@@ -557,7 +577,9 @@ export class MemorySystem {
   /**
    * Extract learnings from an interaction
    */
-  private async extractLearnings(interaction: InteractionMemory): Promise<void> {
+  private async extractLearnings(
+    interaction: InteractionMemory
+  ): Promise<void> {
     // Pattern recognition logic
     const patterns = await this.detectPatterns(interaction);
 
@@ -571,18 +593,27 @@ export class MemorySystem {
    */
   private async detectPatterns(
     interaction: InteractionMemory
-  ): Promise<Omit<PatternMemory, "id" | "timestamp" | "relevanceScore" | "accessCount" | "lastAccessed">[]> {
-    const patterns: Omit<PatternMemory, "id" | "timestamp" | "relevanceScore" | "accessCount" | "lastAccessed">[] = [];
+  ): Promise<
+    Omit<
+      PatternMemory,
+      'id' | 'timestamp' | 'relevanceScore' | 'accessCount' | 'lastAccessed'
+    >[]
+  > {
+    const patterns: Omit<
+      PatternMemory,
+      'id' | 'timestamp' | 'relevanceScore' | 'accessCount' | 'lastAccessed'
+    >[] = [];
 
     // Check for recurring patterns
-    const similar = this.shortTermMemory.size > 10
-      ? await this.recall(interaction.content.actionType)
-      : [];
+    const similar =
+      this.shortTermMemory.size > 10
+        ? await this.recall(interaction.content.actionType)
+        : [];
 
     if (similar.length > 3) {
       patterns.push({
-        type: "pattern",
-        category: "short_term",
+        type: 'pattern',
+        category: 'short_term',
         content: {
           pattern: `${interaction.content.actionType} success correlation`,
           frequency: similar.length,
@@ -590,10 +621,10 @@ export class MemorySystem {
           triggers: [interaction.content.actionType],
           outcomes: similar
             .map((m) => (m as InteractionMemory).content.outcome)
-            .filter((o) => o === "success"),
+            .filter((o) => o === 'success'),
           conditions: { action_type: interaction.content.actionType },
         },
-        tags: ["behavior", "pattern", interaction.content.actionType],
+        tags: ['behavior', 'pattern', interaction.content.actionType],
         metadata: {},
       });
     }
@@ -615,8 +646,8 @@ export class MemorySystem {
     }
 
     // Successful outcomes boost relevance
-    if (data.outcome === "success") score += 0.3;
-    if (data.outcome === "converted") score += 0.3;
+    if (data.outcome === 'success') score += 0.3;
+    if (data.outcome === 'converted') score += 0.3;
 
     // High confidence learnings boost relevance
     if (data.confidence !== undefined && data.confidence > 0.8) score += 0.2;
@@ -635,9 +666,9 @@ export class MemorySystem {
     const queryLower = query.toLowerCase();
 
     // Tag matching
-    score += memory.tags.filter((t) =>
-      queryLower.includes(t.toLowerCase())
-    ).length * 0.2;
+    score +=
+      memory.tags.filter((t) => queryLower.includes(t.toLowerCase())).length *
+      0.2;
 
     // Content matching
     const contentStr = JSON.stringify(memory.content).toLowerCase();
@@ -662,8 +693,8 @@ export class MemorySystem {
    */
   private async loadMemory(): Promise<void> {
     try {
-      const shortTermPath = path.join(this.memoryPath, "short-term");
-      const longTermPath = path.join(this.memoryPath, "long-term");
+      const shortTermPath = path.join(this.memoryPath, 'short-term');
+      const longTermPath = path.join(this.memoryPath, 'long-term');
 
       if (fs.existsSync(shortTermPath)) {
         const files = fs.readdirSync(shortTermPath);
@@ -681,9 +712,11 @@ export class MemorySystem {
         }
       }
 
-      console.log(`✓ Memory loaded: ${this.shortTermMemory.size} short-term, ${this.longTermMemory.length} long-term`);
+      console.log(
+        `âœ“ Memory loaded: ${this.shortTermMemory.size} short-term, ${this.longTermMemory.length} long-term`
+      );
     } catch (error) {
-      console.error("Failed to load memory:", error);
+      console.error('Failed to load memory:', error);
     }
   }
 
@@ -698,16 +731,20 @@ export class MemorySystem {
       if (now - memory.timestamp.getTime() > consolidationThreshold) {
         this.longTermMemory.push(memory);
         this.shortTermMemory.delete(id);
-        await this.saveToFile(memory, "long-term");
+        await this.saveToFile(memory, 'long-term');
 
-        const shortPath = path.join(this.memoryPath, "short-term", `${id}.json`);
+        const shortPath = path.join(
+          this.memoryPath,
+          'short-term',
+          `${id}.json`
+        );
         if (fs.existsSync(shortPath)) {
           fs.removeSync(shortPath);
         }
       }
     }
 
-    console.log("✓ Memory consolidated");
+    console.log('âœ“ Memory consolidated');
   }
 
   /**
@@ -765,9 +802,7 @@ export class MemorySystem {
     const all = Array.from(this.shortTermMemory.values()).concat(
       this.longTermMemory
     );
-    return all
-      .sort((a, b) => b.accessCount - a.accessCount)
-      .slice(0, limit);
+    return all.sort((a, b) => b.accessCount - a.accessCount).slice(0, limit);
   }
 
   /**
@@ -777,25 +812,25 @@ export class MemorySystem {
     const all = Array.from(this.shortTermMemory.values()).concat(
       this.longTermMemory
     );
-    return all
-      .sort((a, b) => a.accessCount - b.accessCount)
-      .slice(0, limit);
+    return all.sort((a, b) => a.accessCount - b.accessCount).slice(0, limit);
   }
 
   /**
    * Generate unique ID
    */
   private generateId(): string {
-    return `mem_${crypto.randomBytes(6).toString("hex")}_${Date.now()}`;
+    return `mem_${crypto.randomBytes(6).toString('hex')}_${Date.now()}`;
   }
 
   /**
    * Find seller by ID (private method)
    */
-  private async findBySellerId(sellerId: string): Promise<SellerProfileMemory | null> {
+  private async findBySellerId(
+    sellerId: string
+  ): Promise<SellerProfileMemory | null> {
     const results = this.longTermMemory.filter(
       (m) =>
-        m.type === "seller_profile" &&
+        m.type === 'seller_profile' &&
         (m as SellerProfileMemory).content.sellerId === sellerId
     );
 
@@ -808,7 +843,7 @@ let memorySystem: MemorySystem | null = null;
 
 export function getMemorySystem(): MemorySystem {
   if (!memorySystem) {
-    memorySystem = new MemorySystem("./memory");
+    memorySystem = new MemorySystem('./memory');
   }
   return memorySystem;
 }

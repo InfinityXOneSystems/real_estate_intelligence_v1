@@ -48,7 +48,10 @@ export class StripePaymentService {
 
       // Load escrow contract if deployed
       if (process.env.CONTRACT_ADDRESS_ESCROW && process.env.PRIVATE_KEY) {
-        const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);
+        const wallet = new ethers.Wallet(
+          process.env.PRIVATE_KEY,
+          this.provider
+        );
         // Contract ABI will be loaded from artifacts after compilation
         // this.escrowContract = new ethers.Contract(address, abi, wallet);
       }
@@ -58,7 +61,9 @@ export class StripePaymentService {
   /**
    * Create a payment intent for escrow deposit
    */
-  async createEscrowPaymentIntent(params: EscrowPaymentIntent): Promise<Stripe.PaymentIntent> {
+  async createEscrowPaymentIntent(
+    params: EscrowPaymentIntent
+  ): Promise<Stripe.PaymentIntent> {
     try {
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount: params.amount,
@@ -76,7 +81,7 @@ export class StripePaymentService {
         capture_method: 'manual', // Hold funds until approved
       });
 
-      console.log(`✓ Created payment intent: ${paymentIntent.id}`);
+      console.log(`âœ“ Created payment intent: ${paymentIntent.id}`);
       return paymentIntent;
     } catch (error) {
       console.error('Failed to create payment intent:', error);
@@ -89,8 +94,9 @@ export class StripePaymentService {
    */
   async capturePayment(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
     try {
-      const paymentIntent = await this.stripe.paymentIntents.capture(paymentIntentId);
-      console.log(`✓ Captured payment: ${paymentIntentId}`);
+      const paymentIntent =
+        await this.stripe.paymentIntents.capture(paymentIntentId);
+      console.log(`âœ“ Captured payment: ${paymentIntentId}`);
 
       // Trigger blockchain escrow deposit
       if (this.escrowContract && paymentIntent.status === 'succeeded') {
@@ -107,14 +113,18 @@ export class StripePaymentService {
   /**
    * Refund payment
    */
-  async refundPayment(paymentIntentId: string, reason?: string): Promise<Stripe.Refund> {
+  async refundPayment(
+    paymentIntentId: string,
+    reason?: string
+  ): Promise<Stripe.Refund> {
     try {
       const refund = await this.stripe.refunds.create({
         payment_intent: paymentIntentId,
-        reason: reason === 'fraudulent' ? 'fraudulent' : 'requested_by_customer',
+        reason:
+          reason === 'fraudulent' ? 'fraudulent' : 'requested_by_customer',
       });
 
-      console.log(`✓ Refunded payment: ${paymentIntentId}`);
+      console.log(`âœ“ Refunded payment: ${paymentIntentId}`);
       return refund;
     } catch (error) {
       console.error('Failed to refund payment:', error);
@@ -133,21 +143,31 @@ export class StripePaymentService {
     }
 
     try {
-      const event = this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+      const event = this.stripe.webhooks.constructEvent(
+        payload,
+        signature,
+        webhookSecret
+      );
 
       console.log(`Received webhook: ${event.type}`);
 
       switch (event.type) {
         case 'payment_intent.succeeded':
-          await this.handlePaymentSucceeded(event.data.object as Stripe.PaymentIntent);
+          await this.handlePaymentSucceeded(
+            event.data.object as Stripe.PaymentIntent
+          );
           break;
 
         case 'payment_intent.payment_failed':
-          await this.handlePaymentFailed(event.data.object as Stripe.PaymentIntent);
+          await this.handlePaymentFailed(
+            event.data.object as Stripe.PaymentIntent
+          );
           break;
 
         case 'payment_intent.canceled':
-          await this.handlePaymentCanceled(event.data.object as Stripe.PaymentIntent);
+          await this.handlePaymentCanceled(
+            event.data.object as Stripe.PaymentIntent
+          );
           break;
 
         case 'charge.refunded':
@@ -166,7 +186,9 @@ export class StripePaymentService {
   /**
    * Deposit funds to blockchain escrow contract
    */
-  private async depositToBlockchain(paymentIntent: Stripe.PaymentIntent): Promise<BlockchainTransaction> {
+  private async depositToBlockchain(
+    paymentIntent: Stripe.PaymentIntent
+  ): Promise<BlockchainTransaction> {
     if (!this.escrowContract || !this.provider) {
       throw new Error('Blockchain not configured');
     }
@@ -183,7 +205,7 @@ export class StripePaymentService {
 
       const receipt = await tx.wait();
 
-      console.log(`✓ Blockchain deposit: ${receipt.hash}`);
+      console.log(`âœ“ Blockchain deposit: ${receipt.hash}`);
 
       return {
         transactionId,
@@ -197,17 +219,23 @@ export class StripePaymentService {
     }
   }
 
-  private async handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
-    console.log(`✓ Payment succeeded: ${paymentIntent.id}`);
+  private async handlePaymentSucceeded(
+    paymentIntent: Stripe.PaymentIntent
+  ): Promise<void> {
+    console.log(`âœ“ Payment succeeded: ${paymentIntent.id}`);
     // Trigger notifications, update database, etc.
   }
 
-  private async handlePaymentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
-    console.error(`✗ Payment failed: ${paymentIntent.id}`);
+  private async handlePaymentFailed(
+    paymentIntent: Stripe.PaymentIntent
+  ): Promise<void> {
+    console.error(`âœ— Payment failed: ${paymentIntent.id}`);
     // Send failure notifications
   }
 
-  private async handlePaymentCanceled(paymentIntent: Stripe.PaymentIntent): Promise<void> {
+  private async handlePaymentCanceled(
+    paymentIntent: Stripe.PaymentIntent
+  ): Promise<void> {
     console.log(`Payment canceled: ${paymentIntent.id}`);
     // Clean up any pending blockchain transactions
   }
@@ -230,7 +258,7 @@ export class StripePaymentService {
         },
       });
 
-      console.log(`✓ Created customer: ${customer.id}`);
+      console.log(`âœ“ Created customer: ${customer.id}`);
       return customer;
     } catch (error) {
       console.error('Failed to create customer:', error);
@@ -253,7 +281,7 @@ export class StripePaymentService {
         metadata,
       });
 
-      console.log(`✓ Created subscription: ${subscription.id}`);
+      console.log(`âœ“ Created subscription: ${subscription.id}`);
       return subscription;
     } catch (error) {
       console.error('Failed to create subscription:', error);

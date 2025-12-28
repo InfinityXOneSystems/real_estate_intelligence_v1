@@ -1,13 +1,13 @@
 /**
  * Firestore Memory Layer - Distributed Context Storage
- * 
+ *
  * Replaces PostgreSQL with Firestore for:
  * - Real-time conversation context
  * - Seller psychology profiles
  * - Agent decision history
  * - Property analysis results
  * - RAG-indexed embeddings
- * 
+ *
  * @package memory
  * @author JARVIS
  * @version 1.0.0
@@ -176,7 +176,9 @@ export class FirestoreMemory extends EventEmitter {
    */
   private initialize(): void {
     try {
-      const credentialPath = process.env.GCP_SERVICE_ACCOUNT_KEY_PATH || './secrets/gcp-service-account.json';
+      const credentialPath =
+        process.env.GCP_SERVICE_ACCOUNT_KEY_PATH ||
+        './secrets/gcp-service-account.json';
       const projectId = process.env.GCP_PROJECT_ID || 'infinity-x-one-systems';
 
       let serviceAccount: ServiceAccount;
@@ -189,7 +191,9 @@ export class FirestoreMemory extends EventEmitter {
         // Fallback: construct from environment variables
         serviceAccount = {
           projectId: projectId,
-          clientEmail: process.env.GCP_SERVICE_ACCOUNT_EMAIL || 'real-estate-intelligence@infinity-x-one-systems.iam.gserviceaccount.com',
+          clientEmail:
+            process.env.GCP_SERVICE_ACCOUNT_EMAIL ||
+            'real-estate-intelligence@infinity-x-one-systems.iam.gserviceaccount.com',
           privateKey: process.env.GCP_PRIVATE_KEY?.replace(/\\n/g, '\n'),
         } as ServiceAccount;
       }
@@ -224,7 +228,12 @@ export class FirestoreMemory extends EventEmitter {
       timestamp: Timestamp.now(),
       updatedAt: Timestamp.now(),
     });
-    this.cacheMap.set(docRef.id, { id: docRef.id, type: 'seller', data: sellerData, timestamp: Timestamp.now() });
+    this.cacheMap.set(docRef.id, {
+      id: docRef.id,
+      type: 'seller',
+      data: sellerData,
+      timestamp: Timestamp.now(),
+    });
     logger.info('Seller stored', { id: docRef.id, name: sellerData.name });
     return docRef.id;
   }
@@ -239,8 +248,16 @@ export class FirestoreMemory extends EventEmitter {
       timestamp: Timestamp.now(),
       updatedAt: Timestamp.now(),
     });
-    this.cacheMap.set(docRef.id, { id: docRef.id, type: 'property', data: propertyData, timestamp: Timestamp.now() });
-    logger.info('Property stored', { id: docRef.id, address: propertyData.address });
+    this.cacheMap.set(docRef.id, {
+      id: docRef.id,
+      type: 'property',
+      data: propertyData,
+      timestamp: Timestamp.now(),
+    });
+    logger.info('Property stored', {
+      id: docRef.id,
+      address: propertyData.address,
+    });
     return docRef.id;
   }
 
@@ -254,7 +271,10 @@ export class FirestoreMemory extends EventEmitter {
       timestamp: Timestamp.now(),
       updatedAt: Timestamp.now(),
     });
-    logger.info('Agent metrics stored', { id: docRef.id, agent: agentData.agentName });
+    logger.info('Agent metrics stored', {
+      id: docRef.id,
+      agent: agentData.agentName,
+    });
     return docRef.id;
   }
 
@@ -267,20 +287,28 @@ export class FirestoreMemory extends EventEmitter {
       ...outcomeData,
       timestamp: Timestamp.now(),
     });
-    logger.info('Outcome stored', { id: docRef.id, scenario: outcomeData.scenarioId });
+    logger.info('Outcome stored', {
+      id: docRef.id,
+      scenario: outcomeData.scenarioId,
+    });
     return docRef.id;
   }
 
   /**
    * Store conversation with sentiment
    */
-  async storeConversation(conversationData: ConversationMemory['data']): Promise<string> {
+  async storeConversation(
+    conversationData: ConversationMemory['data']
+  ): Promise<string> {
     const collectionRef = collection(this.db, 'conversations');
     const docRef = await addDoc(collectionRef, {
       ...conversationData,
       timestamp: Timestamp.now(),
     });
-    logger.info('Conversation stored', { id: docRef.id, topic: conversationData.topic });
+    logger.info('Conversation stored', {
+      id: docRef.id,
+      topic: conversationData.topic,
+    });
     return docRef.id;
   }
 
@@ -297,7 +325,12 @@ export class FirestoreMemory extends EventEmitter {
 
     if (docSnap.exists()) {
       const data = docSnap.data() as SellerMemory['data'];
-      this.cacheMap.set(sellerId, { id: sellerId, type: 'seller', data, timestamp: Timestamp.now() });
+      this.cacheMap.set(sellerId, {
+        id: sellerId,
+        type: 'seller',
+        data,
+        timestamp: Timestamp.now(),
+      });
       return data;
     }
     return null;
@@ -306,7 +339,10 @@ export class FirestoreMemory extends EventEmitter {
   /**
    * Query sellers by situation
    */
-  async querySellersBySituation(situation: string, limitTo: number = 10): Promise<SellerMemory[]> {
+  async querySellersBySituation(
+    situation: string,
+    limitTo: number = 10
+  ): Promise<SellerMemory[]> {
     const q = query(
       collection(this.db, 'sellers'),
       where('situation', '==', situation),
@@ -332,7 +368,10 @@ export class FirestoreMemory extends EventEmitter {
   /**
    * Query properties by ZIP code
    */
-  async getPropertiesByZipCode(zipCode: string, limitTo: number = 20): Promise<PropertyMemory[]> {
+  async getPropertiesByZipCode(
+    zipCode: string,
+    limitTo: number = 20
+  ): Promise<PropertyMemory[]> {
     const q = query(
       collection(this.db, 'properties'),
       where('zipCode', '==', zipCode),
@@ -383,7 +422,10 @@ export class FirestoreMemory extends EventEmitter {
   /**
    * Query successful outcomes
    */
-  async getSuccessfulOutcomes(situation: string, limitTo: number = 10): Promise<OutcomeMemory[]> {
+  async getSuccessfulOutcomes(
+    situation: string,
+    limitTo: number = 10
+  ): Promise<OutcomeMemory[]> {
     const q = query(
       collection(this.db, 'outcomes'),
       where('situation', '==', situation),
@@ -410,7 +452,10 @@ export class FirestoreMemory extends EventEmitter {
   /**
    * Update seller psychology
    */
-  async updateSellerPsychology(sellerId: string, psychologyData: DocumentData): Promise<void> {
+  async updateSellerPsychology(
+    sellerId: string,
+    psychologyData: DocumentData
+  ): Promise<void> {
     const docRef = doc(this.db, 'sellers', sellerId);
     await updateDoc(docRef, {
       psychologicalProfile: psychologyData,
@@ -423,7 +468,12 @@ export class FirestoreMemory extends EventEmitter {
   /**
    * Store RAG embedding for retrieval
    */
-  async storeEmbedding(collectionName: string, docId: string, embedding: number[], metadata: DocumentData): Promise<void> {
+  async storeEmbedding(
+    collectionName: string,
+    docId: string,
+    embedding: number[],
+    metadata: DocumentData
+  ): Promise<void> {
     const docRef = doc(this.db, collectionName, docId);
     await updateDoc(docRef, {
       embedding,

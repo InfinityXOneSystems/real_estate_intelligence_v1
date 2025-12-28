@@ -55,8 +55,24 @@ interface HeatmapPoint {
 export class StatisticsScraperEngine {
   private browser: Browser | null = null;
   private readonly treasureCoastZips = [
-    '34945', '34946', '34947', '34948', '34949', // Port St. Lucie
-    '34950', '34951', '34952', '34953', '34954', '34957', '34983', '34984', '34986', '34987', '34990', '34991', '34997', // Fort Pierce area
+    '34945',
+    '34946',
+    '34947',
+    '34948',
+    '34949', // Port St. Lucie
+    '34950',
+    '34951',
+    '34952',
+    '34953',
+    '34954',
+    '34957',
+    '34983',
+    '34984',
+    '34986',
+    '34987',
+    '34990',
+    '34991',
+    '34997', // Fort Pierce area
   ];
 
   async initialize(): Promise<void> {
@@ -64,7 +80,7 @@ export class StatisticsScraperEngine {
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
-    console.log('✓ Statistics scraper initialized');
+    console.log('âœ“ Statistics scraper initialized');
   }
 
   /**
@@ -119,9 +135,15 @@ export class StatisticsScraperEngine {
 
       // Extract market data from page
       const data = await page.evaluate(() => {
-        const searchResults = document.querySelectorAll('[data-test="property-card"]').length;
-        const medianPriceEl = document.querySelector('[data-test="median-price"]');
-        const timeOnMarketEl = document.querySelector('[data-test="time-on-market"]');
+        const searchResults = document.querySelectorAll(
+          '[data-test="property-card"]'
+        ).length;
+        const medianPriceEl = document.querySelector(
+          '[data-test="median-price"]'
+        );
+        const timeOnMarketEl = document.querySelector(
+          '[data-test="time-on-market"]'
+        );
 
         return {
           searchResults,
@@ -148,7 +170,9 @@ export class StatisticsScraperEngine {
   /**
    * Scrape Walk Score, Transit Score, and Bike Score
    */
-  async scrapeWalkScore(address: string): Promise<{ walkScore: number; transitScore: number; bikeScore: number }> {
+  async scrapeWalkScore(
+    address: string
+  ): Promise<{ walkScore: number; transitScore: number; bikeScore: number }> {
     try {
       const response = await axios.get('https://api.walkscore.com/score', {
         params: {
@@ -179,16 +203,22 @@ export class StatisticsScraperEngine {
   async scrapeCrimeData(city: string, state: string): Promise<number> {
     try {
       // FBI Crime Data API (requires API key)
-      const response = await axios.get('https://api.usa.gov/crime/fbi/cde/arrest/state/offense-count', {
-        params: {
-          state_abbr: state,
-          api_key: process.env.FBI_CRIME_API_KEY || '',
-        },
-      });
+      const response = await axios.get(
+        'https://api.usa.gov/crime/fbi/cde/arrest/state/offense-count',
+        {
+          params: {
+            state_abbr: state,
+            api_key: process.env.FBI_CRIME_API_KEY || '',
+          },
+        }
+      );
 
       // Calculate crime rate per 100,000 people
-      const crimeRate = response.data.results?.reduce((sum: number, item: any) =>
-        sum + (item.actual || 0), 0) || 0;
+      const crimeRate =
+        response.data.results?.reduce(
+          (sum: number, item: any) => sum + (item.actual || 0),
+          0
+        ) || 0;
 
       return crimeRate;
     } catch (error) {
@@ -206,15 +236,20 @@ export class StatisticsScraperEngine {
     const page = await this.browser!.newPage();
 
     try {
-      await page.goto(`https://www.greatschools.org/search/search.page?zip=${zipCode}`, {
-        waitUntil: 'networkidle2',
-      });
+      await page.goto(
+        `https://www.greatschools.org/search/search.page?zip=${zipCode}`,
+        {
+          waitUntil: 'networkidle2',
+        }
+      );
 
       const avgRating = await page.evaluate(() => {
-        const ratings = Array.from(document.querySelectorAll('.rating')).map(el =>
-          parseFloat(el.textContent || '0')
+        const ratings = Array.from(document.querySelectorAll('.rating')).map(
+          (el) => parseFloat(el.textContent || '0')
         );
-        return ratings.length > 0 ? ratings.reduce((a, b) => a + b) / ratings.length : 0;
+        return ratings.length > 0
+          ? ratings.reduce((a, b) => a + b) / ratings.length
+          : 0;
       });
 
       return avgRating;
@@ -264,7 +299,7 @@ export class StatisticsScraperEngine {
       demographics: {},
     };
 
-    console.log(`✓ Aggregated statistics for ${zipCode}`);
+    console.log(`âœ“ Aggregated statistics for ${zipCode}`);
     return aggregated;
   }
 
@@ -286,12 +321,11 @@ export class StatisticsScraperEngine {
         const growthScore = this.calculateGrowthScore(stats);
         const qualityScore = this.calculateQualityScore(stats);
 
-        const overallScore = (
+        const overallScore =
           demandScore * 0.3 +
           affordabilityScore * 0.2 +
           growthScore * 0.3 +
-          qualityScore * 0.2
-        );
+          qualityScore * 0.2;
 
         // Get approximate coordinates for ZIP code
         const coords = await this.geocodeZip(zip);
@@ -308,7 +342,9 @@ export class StatisticsScraperEngine {
           },
         });
 
-        console.log(`✓ Generated heatmap point for ${zip}: score ${Math.round(overallScore)}`);
+        console.log(
+          `âœ“ Generated heatmap point for ${zip}: score ${Math.round(overallScore)}`
+        );
 
         // Rate limiting
         await this.delay(2000);
@@ -317,7 +353,7 @@ export class StatisticsScraperEngine {
       }
     }
 
-    console.log(`✓ Generated ${heatmapPoints.length} heatmap points`);
+    console.log(`âœ“ Generated ${heatmapPoints.length} heatmap points`);
     return heatmapPoints;
   }
 
@@ -327,7 +363,10 @@ export class StatisticsScraperEngine {
   private calculateDemandScore(stats: BehaviorData): number {
     const viewsWeight = (stats.trends.propertyViews || 0) / 100;
     const inquiryWeight = (stats.trends.inquiryRate || 50) / 100;
-    const marketTimeWeight = Math.max(0, 100 - (stats.trends.timeOnMarket || 60));
+    const marketTimeWeight = Math.max(
+      0,
+      100 - (stats.trends.timeOnMarket || 60)
+    );
 
     return Math.min(100, (viewsWeight + inquiryWeight + marketTimeWeight) / 3);
   }
@@ -363,7 +402,10 @@ export class StatisticsScraperEngine {
   private calculateQualityScore(stats: BehaviorData): number {
     const walkScore = stats.metrics.walkScore || 50;
     const schoolRating = (stats.metrics.schoolRating || 5) * 10;
-    const crimeWeight = Math.max(0, 100 - (stats.metrics.crimeRate || 500) / 10);
+    const crimeWeight = Math.max(
+      0,
+      100 - (stats.metrics.crimeRate || 500) / 10
+    );
 
     return (walkScore + schoolRating + crimeWeight) / 3;
   }
@@ -373,12 +415,15 @@ export class StatisticsScraperEngine {
    */
   private async geocodeZip(zip: string): Promise<{ lat: number; lng: number }> {
     try {
-      const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
-        params: {
-          address: zip,
-          key: process.env.GOOGLE_MAPS_API_KEY || '',
-        },
-      });
+      const response = await axios.get(
+        'https://maps.googleapis.com/maps/api/geocode/json',
+        {
+          params: {
+            address: zip,
+            key: process.env.GOOGLE_MAPS_API_KEY || '',
+          },
+        }
+      );
 
       const location = response.data.results?.[0]?.geometry?.location;
       return location || { lat: 27.2931, lng: -80.3253 }; // Default to Port St. Lucie
@@ -391,7 +436,7 @@ export class StatisticsScraperEngine {
    * Delay helper
    */
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -401,7 +446,7 @@ export class StatisticsScraperEngine {
     if (this.browser) {
       await this.browser.close();
       this.browser = null;
-      console.log('✓ Statistics scraper closed');
+      console.log('âœ“ Statistics scraper closed');
     }
   }
 }

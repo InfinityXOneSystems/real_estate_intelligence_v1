@@ -1,8 +1,8 @@
 /**
  * Vertex AI Model Definitions & Configuration
- * 
+ *
  * Defines available Google Cloud Vertex AI models and their configurations
- * 
+ *
  * @package config
  * @author JARVIS
  * @version 1.0.0
@@ -39,8 +39,15 @@ export const VERTEX_AI_MODELS: Record<string, VertexModel> = {
   'gemini-2-0-pro': {
     name: 'gemini-2-0-pro',
     displayName: 'Gemini 2.0 Pro',
-    description: 'Advanced reasoning and multimodal understanding with code execution',
-    capabilities: ['text-generation', 'vision', 'code', 'reasoning', 'multimodal'],
+    description:
+      'Advanced reasoning and multimodal understanding with code execution',
+    capabilities: [
+      'text-generation',
+      'vision',
+      'code',
+      'reasoning',
+      'multimodal',
+    ],
     modelType: 'multimodal',
     maxInputTokens: 1000000,
     maxOutputTokens: 8192,
@@ -70,7 +77,8 @@ export const VERTEX_AI_MODELS: Record<string, VertexModel> = {
   'gemini-2-0-flash': {
     name: 'gemini-2-0-flash',
     displayName: 'Gemini 2.0 Flash',
-    description: 'Fast, efficient model for real-time applications and streaming',
+    description:
+      'Fast, efficient model for real-time applications and streaming',
     capabilities: ['text-generation', 'streaming', 'code', 'fast-inference'],
     modelType: 'text',
     maxInputTokens: 1000000,
@@ -96,7 +104,8 @@ export const VERTEX_AI_MODELS: Record<string, VertexModel> = {
   'gemini-1-5-pro': {
     name: 'gemini-1-5-pro',
     displayName: 'Gemini 1.5 Pro',
-    description: 'Long-context understanding with excellent reasoning capabilities',
+    description:
+      'Long-context understanding with excellent reasoning capabilities',
     capabilities: ['text-generation', 'long-context', 'reasoning'],
     modelType: 'text',
     maxInputTokens: 2000000,
@@ -137,7 +146,11 @@ export const VERTEX_AI_MODELS: Record<string, VertexModel> = {
       p50: 200,
       p95: 500,
     },
-    specializations: ['rag-retrieval', 'semantic-search', 'similarity-matching'],
+    specializations: [
+      'rag-retrieval',
+      'semantic-search',
+      'similarity-matching',
+    ],
     recommended_for: [
       'rag-context-embedding',
       'seller-similarity-search',
@@ -179,7 +192,7 @@ export const VERTEX_AI_MODELS: Record<string, VertexModel> = {
   'claude-3-5-sonnet': {
     name: 'claude-3-5-sonnet',
     displayName: 'Claude 3.5 Sonnet (via Vertex)',
-    description: 'Anthropic\'s Claude 3.5 Sonnet accessible through Vertex AI',
+    description: "Anthropic's Claude 3.5 Sonnet accessible through Vertex AI",
     capabilities: ['text-generation', 'reasoning', 'analysis'],
     modelType: 'text',
     maxInputTokens: 200000,
@@ -313,7 +326,8 @@ export function getVertexModel(modelName: string): VertexModel | null {
  */
 
 export function getRecommendedModel(useCase: string): string {
-  const strategy = MODEL_SELECTION_STRATEGY[useCase as keyof typeof MODEL_SELECTION_STRATEGY];
+  const strategy =
+    MODEL_SELECTION_STRATEGY[useCase as keyof typeof MODEL_SELECTION_STRATEGY];
   return strategy?.primary || MODEL_SELECTION_STRATEGY.default.primary;
 }
 
@@ -322,9 +336,11 @@ export function getRecommendedModel(useCase: string): string {
  */
 
 export function getModelFallbackChain(useCase: string): string[] {
-  const strategy = MODEL_SELECTION_STRATEGY[useCase as keyof typeof MODEL_SELECTION_STRATEGY];
+  const strategy =
+    MODEL_SELECTION_STRATEGY[useCase as keyof typeof MODEL_SELECTION_STRATEGY];
   const primary = strategy?.primary || MODEL_SELECTION_STRATEGY.default.primary;
-  const fallbacks = strategy?.fallback || MODEL_SELECTION_STRATEGY.default.fallback;
+  const fallbacks =
+    strategy?.fallback || MODEL_SELECTION_STRATEGY.default.fallback;
   return [primary, ...fallbacks];
 }
 

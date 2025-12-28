@@ -13,6 +13,8 @@
     "test:coverage": "jest --coverage",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
+    "format": "prettier --write src/**/*.{ts,js,json}",
+    "lint:fix": "eslint src --ext .ts --fix",
     "crawl": "ts-node src/crawlers/orchestrator.ts",
     "contracts:compile": "hardhat compile",
     "contracts:deploy": "hardhat run scripts/deploy-contracts.ts --network sepolia",
@@ -66,7 +68,7 @@
     "openai": "^4.67.3",
     "ethers": "^6.13.4",
     "stripe": "^17.3.1",
-    "elevenlabs-node": "^1.2.2",
+    "elevenlabs": "^0.10.0",
     "twilio": "^5.3.5",
     "@sendgrid/mail": "^8.1.4",
     "puppeteer": "^23.10.4",
@@ -93,7 +95,8 @@
     "ts-jest": "^29.2.5",
     "eslint": "^9.16.0",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
-    "@typescript-eslint/parser": "^8.18.0"
+    "@typescript-eslint/parser": "^8.18.0",
+    "prettier": "^3.2.5"
   },
   "engines": {
     "node": ">=20.0.0",

@@ -104,7 +104,11 @@ export class WorkflowAutomationSystem {
         message.html || message.text || '',
       ].join('\n');
 
-      const encodedEmail = Buffer.from(email).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      const encodedEmail = Buffer.from(email)
+        .toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
 
       const response = await this.gmail.users.messages.send({
         userId: 'me',
@@ -113,7 +117,7 @@ export class WorkflowAutomationSystem {
         },
       });
 
-      console.log(`✓ Gmail sent: ${response.data.id}`);
+      console.log(`âœ“ Gmail sent: ${response.data.id}`);
       return response.data.id;
     } catch (error) {
       console.error('Gmail send failed:', error);
@@ -138,7 +142,7 @@ export class WorkflowAutomationSystem {
       };
 
       const response = await sgMail.send(msg);
-      console.log(`✓ SendGrid sent: ${response[0].statusCode}`);
+      console.log(`âœ“ SendGrid sent: ${response[0].statusCode}`);
       return response[0].headers['x-message-id'] || 'sent';
     } catch (error) {
       console.error('SendGrid send failed:', error);
@@ -155,7 +159,7 @@ export class WorkflowAutomationSystem {
     unreadOnly?: boolean;
   }): Promise<any[]> {
     try {
-      const query = options?.unreadOnly ? 'is:unread' : (options?.query || '');
+      const query = options?.unreadOnly ? 'is:unread' : options?.query || '';
 
       const response = await this.gmail.users.messages.list({
         userId: 'me',
@@ -200,7 +204,7 @@ export class WorkflowAutomationSystem {
           dateTime: event.end.toISOString(),
           timeZone: 'America/New_York',
         },
-        attendees: event.attendees?.map(email => ({ email })),
+        attendees: event.attendees?.map((email) => ({ email })),
         reminders: event.reminders || {
           useDefault: false,
           overrides: [
@@ -216,7 +220,7 @@ export class WorkflowAutomationSystem {
         sendUpdates: 'all', // Send email invitations
       });
 
-      console.log(`✓ Calendar event created: ${response.data.id}`);
+      console.log(`âœ“ Calendar event created: ${response.data.id}`);
       return response.data.id;
     } catch (error) {
       console.error('Failed to create calendar event:', error);
@@ -264,7 +268,7 @@ export class WorkflowAutomationSystem {
         requestBody: taskResource,
       });
 
-      console.log(`✓ Task created: ${response.data.id}`);
+      console.log(`âœ“ Task created: ${response.data.id}`);
       return response.data.id;
     } catch (error) {
       console.error('Failed to create task:', error);
@@ -334,13 +338,17 @@ export class WorkflowAutomationSystem {
       html: template,
     });
 
-    console.log(`✓ Follow-up email sent to ${params.clientEmail} (day ${params.daysSinceInquiry})`);
+    console.log(
+      `âœ“ Follow-up email sent to ${params.clientEmail} (day ${params.daysSinceInquiry})`
+    );
   }
 
   /**
    * Broker personal assistant - automate routine tasks
    */
-  async executeBrokerAssistantAction(action: BrokerAssistantAction): Promise<void> {
+  async executeBrokerAssistantAction(
+    action: BrokerAssistantAction
+  ): Promise<void> {
     switch (action.type) {
       case 'email':
         await this.handleAutomatedEmail(action);
@@ -360,7 +368,9 @@ export class WorkflowAutomationSystem {
     }
   }
 
-  private async handleAutomatedEmail(action: BrokerAssistantAction): Promise<void> {
+  private async handleAutomatedEmail(
+    action: BrokerAssistantAction
+  ): Promise<void> {
     await this.sendMarketingEmail({
       to: action.clientEmail,
       subject: `Property Update: ${action.propertyId}`,
@@ -368,7 +378,9 @@ export class WorkflowAutomationSystem {
     });
   }
 
-  private async handleAutomatedCalendar(action: BrokerAssistantAction): Promise<void> {
+  private async handleAutomatedCalendar(
+    action: BrokerAssistantAction
+  ): Promise<void> {
     const start = new Date();
     start.setDate(start.getDate() + 1);
     const end = new Date(start);
@@ -383,7 +395,9 @@ export class WorkflowAutomationSystem {
     });
   }
 
-  private async handleAutomatedTask(action: BrokerAssistantAction): Promise<void> {
+  private async handleAutomatedTask(
+    action: BrokerAssistantAction
+  ): Promise<void> {
     await this.createTask({
       title: `Follow up on ${action.propertyId}`,
       notes: `Client: ${action.clientEmail}`,
@@ -392,7 +406,9 @@ export class WorkflowAutomationSystem {
     });
   }
 
-  private async handleAutomatedFollowup(action: BrokerAssistantAction): Promise<void> {
+  private async handleAutomatedFollowup(
+    action: BrokerAssistantAction
+  ): Promise<void> {
     await this.sendFollowUpEmail({
       clientEmail: action.clientEmail,
       clientName: action.context.clientName || 'there',
@@ -415,15 +431,27 @@ export class WorkflowAutomationSystem {
       id: messageId,
     });
 
-    const subject = message.data.payload.headers.find((h: any) => h.name === 'Subject')?.value || '';
-    const body = Buffer.from(message.data.payload.body?.data || '', 'base64').toString();
+    const subject =
+      message.data.payload.headers.find((h: any) => h.name === 'Subject')
+        ?.value || '';
+    const body = Buffer.from(
+      message.data.payload.body?.data || '',
+      'base64'
+    ).toString();
 
     // Simple intent detection (enhance with AI)
-    let intent: 'inquiry' | 'appointment' | 'feedback' | 'complaint' | 'other' = 'other';
+    let intent: 'inquiry' | 'appointment' | 'feedback' | 'complaint' | 'other' =
+      'other';
 
-    if (subject.match(/interested|inquiry|information/i) || body.match(/interested|want to know/i)) {
+    if (
+      subject.match(/interested|inquiry|information/i) ||
+      body.match(/interested|want to know/i)
+    ) {
       intent = 'inquiry';
-    } else if (subject.match(/appointment|schedule|visit/i) || body.match(/schedule|visit|see/i)) {
+    } else if (
+      subject.match(/appointment|schedule|visit/i) ||
+      body.match(/schedule|visit|see/i)
+    ) {
       intent = 'appointment';
     } else if (subject.match(/feedback|review/i)) {
       intent = 'feedback';
@@ -450,15 +478,20 @@ export class WorkflowAutomationSystem {
    * Auto-respond to incoming emails based on intent
    */
   async autoRespondToEmail(messageId: string): Promise<void> {
-    const { intent, propertyId, sentiment } = await this.parseIncomingEmail(messageId);
+    const { intent, propertyId, sentiment } =
+      await this.parseIncomingEmail(messageId);
 
     const message = await this.gmail.users.messages.get({
       userId: 'me',
       id: messageId,
     });
 
-    const from = message.data.payload.headers.find((h: any) => h.name === 'From')?.value || '';
-    const subject = message.data.payload.headers.find((h: any) => h.name === 'Subject')?.value || '';
+    const from =
+      message.data.payload.headers.find((h: any) => h.name === 'From')?.value ||
+      '';
+    const subject =
+      message.data.payload.headers.find((h: any) => h.name === 'Subject')
+        ?.value || '';
 
     let response: string;
 
@@ -482,7 +515,7 @@ export class WorkflowAutomationSystem {
       html: `<p>${response}</p>`,
     });
 
-    console.log(`✓ Auto-responded to email from ${from} (intent: ${intent})`);
+    console.log(`âœ“ Auto-responded to email from ${from} (intent: ${intent})`);
   }
 }
 

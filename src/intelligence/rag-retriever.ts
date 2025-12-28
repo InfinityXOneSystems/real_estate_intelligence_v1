@@ -1,12 +1,12 @@
 /**
  * RAG Memory Retriever - Intelligent Context Lookup
- * 
+ *
  * Uses embeddings to retrieve relevant historical context:
  * - Similar seller situations
  * - Successful negotiation strategies
  * - Agent performance patterns
  * - Market condition parallels
- * 
+ *
  * @package intelligence
  * @author JARVIS
  * @version 1.0.0
@@ -94,7 +94,10 @@ export class RAGRetriever extends EventEmitter {
 
       return result.embedding.values;
     } catch (error) {
-      logger.error('Embedding generation failed', { error, text: text.substring(0, 100) });
+      logger.error('Embedding generation failed', {
+        error,
+        text: text.substring(0, 100),
+      });
       return [];
     }
   }
@@ -142,11 +145,15 @@ export class RAGRetriever extends EventEmitter {
           seller.data.psychologicalProfile
         )}`;
 
-        const sellerEmbedding = seller.embedding || (await this.generateEmbedding(sellerText));
+        const sellerEmbedding =
+          seller.embedding || (await this.generateEmbedding(sellerText));
 
         if (sellerEmbedding.length === 0) continue;
 
-        const similarity = this.cosineSimilarity(queryEmbedding, sellerEmbedding);
+        const similarity = this.cosineSimilarity(
+          queryEmbedding,
+          sellerEmbedding
+        );
 
         if (similarity >= minRelevance) {
           scoredResults.push({
@@ -168,7 +175,10 @@ export class RAGRetriever extends EventEmitter {
         .slice(0, topK)
         .map((r) => r.context);
 
-      logger.info('Similar sellers retrieved', { count: results.length, query: query.query });
+      logger.info('Similar sellers retrieved', {
+        count: results.length,
+        query: query.query,
+      });
       return results;
     } catch (error) {
       logger.error('Seller retrieval failed', { error, query: query.query });
@@ -179,26 +189,33 @@ export class RAGRetriever extends EventEmitter {
   /**
    * Retrieve successful strategies for situation
    */
-  async retrieveSuccessfulStrategies(situation: string, topK: number = 5): Promise<RAGContext[]> {
+  async retrieveSuccessfulStrategies(
+    situation: string,
+    topK: number = 5
+  ): Promise<RAGContext[]> {
     try {
-      const outcomes = await firestoreMemory.getSuccessfulOutcomes(situation, topK * 2);
+      const outcomes = await firestoreMemory.getSuccessfulOutcomes(
+        situation,
+        topK * 2
+      );
 
-      const contexts: RAGContext[] = outcomes
-        .slice(0, topK)
-        .map((outcome) => ({
-          type: 'strategy',
-          relevance: 0.9,
-          source: outcome.id || 'unknown',
-          content: {
-            strategy: outcome.data.strategy,
-            result: outcome.data.result,
-            details: outcome.data.details,
-            learnings: outcome.data.learnings,
-          },
-          similarity: 0.9,
-        }));
+      const contexts: RAGContext[] = outcomes.slice(0, topK).map((outcome) => ({
+        type: 'strategy',
+        relevance: 0.9,
+        source: outcome.id || 'unknown',
+        content: {
+          strategy: outcome.data.strategy,
+          result: outcome.data.result,
+          details: outcome.data.details,
+          learnings: outcome.data.learnings,
+        },
+        similarity: 0.9,
+      }));
 
-      logger.info('Successful strategies retrieved', { count: contexts.length, situation });
+      logger.info('Successful strategies retrieved', {
+        count: contexts.length,
+        situation,
+      });
       return contexts;
     } catch (error) {
       logger.error('Strategy retrieval failed', { error, situation });
@@ -209,12 +226,19 @@ export class RAGRetriever extends EventEmitter {
   /**
    * Retrieve top performing agents for task
    */
-  async retrieveTopAgents(specialization: string, topK: number = 3): Promise<RAGContext[]> {
+  async retrieveTopAgents(
+    specialization: string,
+    topK: number = 3
+  ): Promise<RAGContext[]> {
     try {
       const agents = await firestoreMemory.getTopAgents(topK);
 
       const contexts: RAGContext[] = agents
-        .filter((agent) => agent.data.specializations.includes(specialization) || specialization === 'any')
+        .filter(
+          (agent) =>
+            agent.data.specializations.includes(specialization) ||
+            specialization === 'any'
+        )
         .map((agent) => ({
           type: 'outcome',
           relevance: agent.data.successRate / 100,
@@ -229,7 +253,10 @@ export class RAGRetriever extends EventEmitter {
           similarity: agent.data.successRate / 100,
         }));
 
-      logger.info('Top agents retrieved', { count: contexts.length, specialization });
+      logger.info('Top agents retrieved', {
+        count: contexts.length,
+        specialization,
+      });
       return contexts;
     } catch (error) {
       logger.error('Agent retrieval failed', { error, specialization });
@@ -240,9 +267,15 @@ export class RAGRetriever extends EventEmitter {
   /**
    * Retrieve properties in similar market conditions
    */
-  async retrieveSimilarProperties(zipCode: string, topK: number = 10): Promise<RAGContext[]> {
+  async retrieveSimilarProperties(
+    zipCode: string,
+    topK: number = 10
+  ): Promise<RAGContext[]> {
     try {
-      const properties = await firestoreMemory.getPropertiesByZipCode(zipCode, topK);
+      const properties = await firestoreMemory.getPropertiesByZipCode(
+        zipCode,
+        topK
+      );
 
       const contexts: RAGContext[] = properties.map((property) => ({
         type: 'property',
@@ -258,7 +291,10 @@ export class RAGRetriever extends EventEmitter {
         similarity: property.data.heatmapIntensity / 100,
       }));
 
-      logger.info('Similar properties retrieved', { count: contexts.length, zipCode });
+      logger.info('Similar properties retrieved', {
+        count: contexts.length,
+        zipCode,
+      });
       return contexts;
     } catch (error) {
       logger.error('Property retrieval failed', { error, zipCode });
@@ -274,16 +310,27 @@ export class RAGRetriever extends EventEmitter {
 
     const [sellers, strategies, agents, properties] = await Promise.all([
       this.retrieveSimilarSellers(ragQuery),
-      this.retrieveSuccessfulStrategies(ragQuery.context.situation || 'general', ragQuery.topK || 5),
+      this.retrieveSuccessfulStrategies(
+        ragQuery.context.situation || 'general',
+        ragQuery.topK || 5
+      ),
       this.retrieveTopAgents(ragQuery.context.specialization || 'any', 3),
-      ragQuery.context.zipCode ? this.retrieveSimilarProperties(ragQuery.context.zipCode, ragQuery.topK || 10) : Promise.resolve([]),
+      ragQuery.context.zipCode
+        ? this.retrieveSimilarProperties(
+            ragQuery.context.zipCode,
+            ragQuery.topK || 10
+          )
+        : Promise.resolve([]),
     ]);
 
     const allContexts = [...sellers, ...strategies, ...agents, ...properties];
 
     // Generate summary from contexts
     const summary = this.generateContextSummary(allContexts);
-    const recommendation = this.generateRecommendation(allContexts, ragQuery.context);
+    const recommendation = this.generateRecommendation(
+      allContexts,
+      ragQuery.context
+    );
 
     const response: RAGResponse = {
       query: ragQuery.query,
@@ -313,7 +360,9 @@ export class RAGRetriever extends EventEmitter {
 
     const summary = relevantContexts
       .slice(0, 3)
-      .map((c) => `${c.type}: ${JSON.stringify(c.content).substring(0, 100)}...`)
+      .map(
+        (c) => `${c.type}: ${JSON.stringify(c.content).substring(0, 100)}...`
+      )
       .join('\n');
 
     return summary;
@@ -322,14 +371,19 @@ export class RAGRetriever extends EventEmitter {
   /**
    * Generate recommendation from contexts
    */
-  private generateRecommendation(contexts: RAGContext[], contextData: Record<string, any>): string {
+  private generateRecommendation(
+    contexts: RAGContext[],
+    contextData: Record<string, any>
+  ): string {
     const relevantContexts = contexts.filter((c) => c.relevance > 0.75);
 
     if (relevantContexts.length === 0) {
       return 'Insufficient historical data for recommendation.';
     }
 
-    const successfulStrategies = relevantContexts.filter((c) => c.type === 'strategy');
+    const successfulStrategies = relevantContexts.filter(
+      (c) => c.type === 'strategy'
+    );
     const topAgents = relevantContexts.filter((c) => c.type === 'outcome');
 
     let recommendation = 'Based on historical data: ';
@@ -342,9 +396,11 @@ export class RAGRetriever extends EventEmitter {
       recommendation += `Leverage top performer approach. `;
     }
 
-    recommendation += `Historical success rate suggests this approach has ${
-      (relevantContexts.reduce((sum, c) => sum + c.relevance, 0) / relevantContexts.length * 100).toFixed(1)
-    }% confidence.`;
+    recommendation += `Historical success rate suggests this approach has ${(
+      (relevantContexts.reduce((sum, c) => sum + c.relevance, 0) /
+        relevantContexts.length) *
+      100
+    ).toFixed(1)}% confidence.`;
 
     return recommendation;
   }

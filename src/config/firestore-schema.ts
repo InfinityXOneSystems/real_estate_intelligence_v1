@@ -1,9 +1,9 @@
 /**
  * Firestore Schema Configuration
- * 
+ *
  * Defines all Firestore collections, documents, and index patterns
  * for the memory system
- * 
+ *
  * @package config
  * @author JARVIS
  * @version 1.0.0
@@ -115,7 +115,12 @@ export interface FirestoreSchema {
       updatedAt: any;
       tags: string[];
     };
-    indexes: ['zipCode', 'distressFactors.foreclosure', 'heatmapIntensity', 'timestamp'];
+    indexes: [
+      'zipCode',
+      'distressFactors.foreclosure',
+      'heatmapIntensity',
+      'timestamp',
+    ];
   };
 
   agents: {

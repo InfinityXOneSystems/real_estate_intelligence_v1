@@ -27,15 +27,15 @@ export interface MarketStatistics {
   propertyTaxDelinquency: number; // percentage delinquent
   poverytyRate: number; // percentage below poverty line
   rentalVacancy: number; // percentage vacant
-  marketTrend: "declining" | "stable" | "appreciating"; // market direction
+  marketTrend: 'declining' | 'stable' | 'appreciating'; // market direction
   distressIndicator: number; // 0-100 composite score
   investmentPotential: number; // 0-100 score
 }
 
 export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
-  "Port St. Lucie": {
-    cityName: "Port St. Lucie",
-    county: "St. Lucie",
+  'Port St. Lucie': {
+    cityName: 'Port St. Lucie',
+    county: 'St. Lucie',
     population: 200000,
     medianIncome: 58000,
     medianHomePrice: 350000,
@@ -49,13 +49,13 @@ export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
     propertyTaxDelinquency: 2.9,
     poverytyRate: 14.2,
     rentalVacancy: 6.5,
-    marketTrend: "appreciating",
+    marketTrend: 'appreciating',
     distressIndicator: 62,
     investmentPotential: 78,
   },
-  "Fort Pierce": {
-    cityName: "Fort Pierce",
-    county: "St. Lucie",
+  'Fort Pierce': {
+    cityName: 'Fort Pierce',
+    county: 'St. Lucie',
     population: 45000,
     medianIncome: 42000,
     medianHomePrice: 280000,
@@ -69,13 +69,13 @@ export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
     propertyTaxDelinquency: 4.2,
     poverytyRate: 19.8,
     rentalVacancy: 8.2,
-    marketTrend: "stable",
+    marketTrend: 'stable',
     distressIndicator: 75,
     investmentPotential: 85,
   },
   Stuart: {
-    cityName: "Stuart",
-    county: "Martin",
+    cityName: 'Stuart',
+    county: 'Martin',
     population: 15000,
     medianIncome: 78000,
     medianHomePrice: 650000,
@@ -89,13 +89,13 @@ export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
     propertyTaxDelinquency: 1.2,
     poverytyRate: 8.5,
     rentalVacancy: 4.2,
-    marketTrend: "appreciating",
+    marketTrend: 'appreciating',
     distressIndicator: 35,
     investmentPotential: 45,
   },
-  "West Palm Beach": {
-    cityName: "West Palm Beach",
-    county: "Palm Beach",
+  'West Palm Beach': {
+    cityName: 'West Palm Beach',
+    county: 'Palm Beach',
     population: 111000,
     medianIncome: 51000,
     medianHomePrice: 420000,
@@ -109,13 +109,13 @@ export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
     propertyTaxDelinquency: 3.5,
     poverytyRate: 16.2,
     rentalVacancy: 7.1,
-    marketTrend: "stable",
+    marketTrend: 'stable',
     distressIndicator: 68,
     investmentPotential: 80,
   },
   Jupiter: {
-    cityName: "Jupiter",
-    county: "Palm Beach",
+    cityName: 'Jupiter',
+    county: 'Palm Beach',
     population: 62000,
     medianIncome: 95000,
     medianHomePrice: 850000,
@@ -129,13 +129,13 @@ export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
     propertyTaxDelinquency: 0.8,
     poverytyRate: 5.2,
     rentalVacancy: 3.5,
-    marketTrend: "appreciating",
+    marketTrend: 'appreciating',
     distressIndicator: 28,
     investmentPotential: 38,
   },
   Okeechobee: {
-    cityName: "Okeechobee",
-    county: "Okeechobee",
+    cityName: 'Okeechobee',
+    county: 'Okeechobee',
     population: 6000,
     medianIncome: 38000,
     medianHomePrice: 200000,
@@ -149,13 +149,13 @@ export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
     propertyTaxDelinquency: 5.5,
     poverytyRate: 21.5,
     rentalVacancy: 9.8,
-    marketTrend: "declining",
+    marketTrend: 'declining',
     distressIndicator: 82,
     investmentPotential: 88,
   },
   Miami: {
-    cityName: "Miami",
-    county: "Miami-Dade",
+    cityName: 'Miami',
+    county: 'Miami-Dade',
     population: 467000,
     medianIncome: 48000,
     medianHomePrice: 380000,
@@ -169,13 +169,13 @@ export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
     propertyTaxDelinquency: 4.0,
     poverytyRate: 17.8,
     rentalVacancy: 7.8,
-    marketTrend: "appreciating",
+    marketTrend: 'appreciating',
     distressIndicator: 70,
     investmentPotential: 82,
   },
-  "Vero Beach": {
-    cityName: "Vero Beach",
-    county: "Indian River",
+  'Vero Beach': {
+    cityName: 'Vero Beach',
+    county: 'Indian River',
     population: 17000,
     medianIncome: 65000,
     medianHomePrice: 520000,
@@ -189,13 +189,13 @@ export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
     propertyTaxDelinquency: 1.8,
     poverytyRate: 10.2,
     rentalVacancy: 5.2,
-    marketTrend: "appreciating",
+    marketTrend: 'appreciating',
     distressIndicator: 45,
     investmentPotential: 58,
   },
-  "Delray Beach": {
-    cityName: "Delray Beach",
-    county: "Palm Beach",
+  'Delray Beach': {
+    cityName: 'Delray Beach',
+    county: 'Palm Beach',
     population: 68000,
     medianIncome: 62000,
     medianHomePrice: 520000,
@@ -209,13 +209,13 @@ export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
     propertyTaxDelinquency: 2.2,
     poverytyRate: 11.5,
     rentalVacancy: 5.8,
-    marketTrend: "appreciating",
+    marketTrend: 'appreciating',
     distressIndicator: 50,
     investmentPotential: 62,
   },
-  "Pompano Beach": {
-    cityName: "Pompano Beach",
-    county: "Broward",
+  'Pompano Beach': {
+    cityName: 'Pompano Beach',
+    county: 'Broward',
     population: 104000,
     medianIncome: 54000,
     medianHomePrice: 430000,
@@ -229,13 +229,13 @@ export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
     propertyTaxDelinquency: 3.1,
     poverytyRate: 13.8,
     rentalVacancy: 6.9,
-    marketTrend: "stable",
+    marketTrend: 'stable',
     distressIndicator: 65,
     investmentPotential: 76,
   },
   Tampa: {
-    cityName: "Tampa",
-    county: "Hillsborough",
+    cityName: 'Tampa',
+    county: 'Hillsborough',
     population: 399000,
     medianIncome: 52000,
     medianHomePrice: 380000,
@@ -249,7 +249,7 @@ export const TREASURE_COAST_STATISTICS: Record<string, MarketStatistics> = {
     propertyTaxDelinquency: 3.6,
     poverytyRate: 15.5,
     rentalVacancy: 7.4,
-    marketTrend: "appreciating",
+    marketTrend: 'appreciating',
     distressIndicator: 66,
     investmentPotential: 79,
   },
@@ -267,7 +267,9 @@ export interface MarketRankings {
 export class StatisticalAnalysisEngine {
   private stats: Record<string, MarketStatistics>;
 
-  constructor(stats: Record<string, MarketStatistics> = TREASURE_COAST_STATISTICS) {
+  constructor(
+    stats: Record<string, MarketStatistics> = TREASURE_COAST_STATISTICS
+  ) {
     this.stats = stats;
   }
 
@@ -317,9 +319,9 @@ export class StatisticalAnalysisEngine {
       stat.bankruptcyRate * 15 + // Bankruptcies: 15% weight
       stat.divorceRate * 12 + // Divorces: 12% weight
       (stat.unemploymentRate / 100) * 200 + // Unemployment: relative weight
-      (stat.propertyTaxDelinquency * 10) + // Tax delinquency: 10% weight
-      (stat.poverytyRate * 5) + // Poverty: 5% weight
-      (stat.litigationRate * 8); // Litigation: 8% weight
+      stat.propertyTaxDelinquency * 10 + // Tax delinquency: 10% weight
+      stat.poverytyRate * 5 + // Poverty: 5% weight
+      stat.litigationRate * 8; // Litigation: 8% weight
 
     return Math.min(100, Math.round(score));
   }
@@ -354,7 +356,7 @@ export class StatisticalAnalysisEngine {
     const stat2 = this.stats[city2];
 
     if (!stat1 || !stat2) {
-      return { error: "One or both markets not found" };
+      return { error: 'One or both markets not found' };
     }
 
     return {
@@ -377,10 +379,16 @@ export class StatisticalAnalysisEngine {
         medianPrice: stat2.medianHomePrice,
       },
       comparison: {
-        distressDiff: Math.abs(stat1.distressIndicator - stat2.distressIndicator),
-        opportunityDiff: Math.abs(stat1.investmentPotential - stat2.investmentPotential),
-        betterForDistressed: stat1.distressIndicator > stat2.distressIndicator ? city1 : city2,
-        betterForInvestment: stat1.investmentPotential > stat2.investmentPotential ? city1 : city2,
+        distressDiff: Math.abs(
+          stat1.distressIndicator - stat2.distressIndicator
+        ),
+        opportunityDiff: Math.abs(
+          stat1.investmentPotential - stat2.investmentPotential
+        ),
+        betterForDistressed:
+          stat1.distressIndicator > stat2.distressIndicator ? city1 : city2,
+        betterForInvestment:
+          stat1.investmentPotential > stat2.investmentPotential ? city1 : city2,
       },
     };
   }
@@ -395,10 +403,14 @@ export class StatisticalAnalysisEngine {
     const riskFactors: Record<string, number> = {};
 
     if (stat.crimeRate > 5) riskFactors.highCrime = stat.crimeRate;
-    if (stat.unemploymentRate > 6) riskFactors.highUnemployment = stat.unemploymentRate;
-    if (stat.foreclosureRate > 2.5) riskFactors.highForeclosure = stat.foreclosureRate;
-    if (stat.propertyTaxDelinquency > 3.5) riskFactors.taxDelinquency = stat.propertyTaxDelinquency;
-    if (stat.delinquencyRate > 4) riskFactors.mortgageDelinquency = stat.delinquencyRate;
+    if (stat.unemploymentRate > 6)
+      riskFactors.highUnemployment = stat.unemploymentRate;
+    if (stat.foreclosureRate > 2.5)
+      riskFactors.highForeclosure = stat.foreclosureRate;
+    if (stat.propertyTaxDelinquency > 3.5)
+      riskFactors.taxDelinquency = stat.propertyTaxDelinquency;
+    if (stat.delinquencyRate > 4)
+      riskFactors.mortgageDelinquency = stat.delinquencyRate;
     if (stat.poverytyRate > 15) riskFactors.highPoverty = stat.poverytyRate;
     if (stat.rentalVacancy > 7) riskFactors.highVacancy = stat.rentalVacancy;
 
@@ -419,27 +431,27 @@ export class StatisticalAnalysisEngine {
     const rankings = this.generateRankings();
     const topOpportunities = this.getTopOpportunityMarkets(3);
 
-    let report = "TREASURE COAST MARKET ANALYSIS REPORT\n";
+    let report = 'TREASURE COAST MARKET ANALYSIS REPORT\n';
     report += `Generated: ${new Date().toISOString()}\n\n`;
 
-    report += "TOP OPPORTUNITY MARKETS (by Distress + Investment Potential):\n";
+    report += 'TOP OPPORTUNITY MARKETS (by Distress + Investment Potential):\n';
     topOpportunities.forEach((market) => {
       report += `  ${market.rank}. ${market.city}\n`;
       report += `     Distress Score: ${market.distress}/100\n`;
       report += `     Investment Potential: ${market.potential}/100\n\n`;
     });
 
-    report += "HIGHEST FORECLOSURE RATES:\n";
+    report += 'HIGHEST FORECLOSURE RATES:\n';
     rankings.byForeclosureRate.slice(0, 5).forEach((item, idx) => {
       report += `  ${idx + 1}. ${item.city}: ${item.rate.toFixed(1)}%\n`;
     });
 
-    report += "\nHIGHEST UNEMPLOYMENT RATES:\n";
+    report += '\nHIGHEST UNEMPLOYMENT RATES:\n';
     rankings.byUnemployment.slice(0, 5).forEach((item, idx) => {
       report += `  ${idx + 1}. ${item.city}: ${item.rate.toFixed(1)}%\n`;
     });
 
-    report += "\nHIGHEST DIVORCE RATES:\n";
+    report += '\nHIGHEST DIVORCE RATES:\n';
     rankings.byDivorceRate.slice(0, 5).forEach((item, idx) => {
       report += `  ${idx + 1}. ${item.city}: ${item.rate.toFixed(1)}/1000 residents\n`;
     });

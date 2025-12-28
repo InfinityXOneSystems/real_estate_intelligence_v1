@@ -16,7 +16,7 @@ import {
   Investor,
   PropertyInvestorMatch,
   BuyCriteria,
-} from "../types";
+} from '../types';
 
 export class InvestorMatchingEngine {
   /**
@@ -43,7 +43,7 @@ export class InvestorMatchingEngine {
           property,
           investor,
           created_at: new Date().toISOString(),
-          status: "pending",
+          status: 'pending',
         };
 
         matches.push(match);
@@ -106,10 +106,7 @@ export class InvestorMatchingEngine {
         score = Math.max(score, 20);
       }
       // Zip code match
-      else if (
-        prefLoc.zip_codes &&
-        prefLoc.zip_codes.includes(property.zip)
-      ) {
+      else if (prefLoc.zip_codes && prefLoc.zip_codes.includes(property.zip)) {
         score = Math.max(score, 30);
       }
       // County match
@@ -156,8 +153,8 @@ export class InvestorMatchingEngine {
 
     // Partial match for similar types
     if (
-      property.property_type === "townhouse" &&
-      investor.preferred_property_types.includes("condo")
+      property.property_type === 'townhouse' &&
+      investor.preferred_property_types.includes('condo')
     ) {
       return 10;
     }
@@ -216,7 +213,7 @@ export class InvestorMatchingEngine {
 
     // Vacancy requirement
     if (criteria.must_be_vacant !== undefined) {
-      const isVacant = property.distress_type.includes("vacant");
+      const isVacant = property.distress_type.includes('vacant');
       if (criteria.must_be_vacant === isVacant) {
         score += 5;
       } else if (criteria.must_be_vacant && !isVacant) {
@@ -261,44 +258,46 @@ export class InvestorMatchingEngine {
     let score = 0;
 
     switch (investor.investment_strategy) {
-      case "fix_and_flip":
+      case 'fix_and_flip':
         // Prefer properties needing work
         if (
-          property.distress_type.includes("fire_damage") ||
-          property.distress_type.includes("water_damage") ||
-          property.distress_type.includes("hoarder")
+          property.distress_type.includes('fire_damage') ||
+          property.distress_type.includes('water_damage') ||
+          property.distress_type.includes('hoarder')
         ) {
           score = 10;
         }
         break;
 
-      case "wholesale":
+      case 'wholesale':
         // Prefer highly distressed, urgent deals
-        if (property.urgency_level === "critical") {
+        if (property.urgency_level === 'critical') {
           score = 10;
-        } else if (property.urgency_level === "high") {
+        } else if (property.urgency_level === 'high') {
           score = 7;
         }
         break;
 
-      case "buy_and_hold":
+      case 'buy_and_hold':
         // Prefer stable properties
-        if (!property.distress_type.includes("fire_damage") &&
-            !property.distress_type.includes("water_damage")) {
+        if (
+          !property.distress_type.includes('fire_damage') &&
+          !property.distress_type.includes('water_damage')
+        ) {
           score = 10;
         }
         break;
 
-      case "rental":
+      case 'rental':
         // Prefer multi-family or stable properties
-        if (property.property_type === "multi_family") {
+        if (property.property_type === 'multi_family') {
           score = 10;
         }
         break;
 
-      case "development":
+      case 'development':
         // Prefer land or teardowns
-        if (property.property_type === "land") {
+        if (property.property_type === 'land') {
           score = 10;
         }
         break;
@@ -325,7 +324,7 @@ export class InvestorMatchingEngine {
           loc.state?.toLowerCase() === property.state.toLowerCase()
       )
     ) {
-      reasons.push("Preferred location match");
+      reasons.push('Preferred location match');
     }
 
     // Property type
@@ -336,37 +335,41 @@ export class InvestorMatchingEngine {
     // Price
     const price = property.listed_price || property.estimated_value || 0;
     if (price > 0 && price <= investor.max_purchase_price) {
-      const pctOfBudget = ((price / investor.max_purchase_price) * 100).toFixed(0);
+      const pctOfBudget = ((price / investor.max_purchase_price) * 100).toFixed(
+        0
+      );
       reasons.push(`Within budget (${pctOfBudget}% of max)`);
     }
 
     // Urgency
-    if (property.urgency_level === "critical") {
-      reasons.push("Critical urgency - likely to accept discount");
-    } else if (property.urgency_level === "high") {
-      reasons.push("High urgency seller");
+    if (property.urgency_level === 'critical') {
+      reasons.push('Critical urgency - likely to accept discount');
+    } else if (property.urgency_level === 'high') {
+      reasons.push('High urgency seller');
     }
 
     // Distress type
-    if (property.distress_type.includes("foreclosure")) {
-      reasons.push("Foreclosure - motivated seller");
+    if (property.distress_type.includes('foreclosure')) {
+      reasons.push('Foreclosure - motivated seller');
     }
-    if (property.distress_type.includes("divorce")) {
-      reasons.push("Divorce sale - needs quick close");
+    if (property.distress_type.includes('divorce')) {
+      reasons.push('Divorce sale - needs quick close');
     }
 
     // Strategy alignment
-    if (investor.investment_strategy === "fix_and_flip" &&
-        (property.distress_type.includes("fire_damage") ||
-         property.distress_type.includes("water_damage"))) {
-      reasons.push("Perfect for fix-and-flip strategy");
+    if (
+      investor.investment_strategy === 'fix_and_flip' &&
+      (property.distress_type.includes('fire_damage') ||
+        property.distress_type.includes('water_damage'))
+    ) {
+      reasons.push('Perfect for fix-and-flip strategy');
     }
 
     // Score-based
     if (score >= 85) {
-      reasons.push("Excellent match - highly recommended");
+      reasons.push('Excellent match - highly recommended');
     } else if (score >= 70) {
-      reasons.push("Strong match");
+      reasons.push('Strong match');
     }
 
     return reasons;
@@ -423,7 +426,7 @@ export class InvestorMatchingEngine {
           property,
           investor,
           created_at: new Date().toISOString(),
-          status: "pending",
+          status: 'pending',
         });
       }
     }

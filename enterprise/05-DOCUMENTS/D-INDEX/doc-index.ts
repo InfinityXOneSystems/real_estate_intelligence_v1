@@ -119,10 +119,10 @@ class DocumentIndexEngine {
         owner: metadata.owner,
       });
 
-      console.log(`✓ Document indexed: ${metadata.documentId}`);
+      console.log(`âœ“ Document indexed: ${metadata.documentId}`);
       return docRef.id;
     } catch (error) {
-      console.error(`✗ Failed to index document: ${error}`);
+      console.error(`âœ— Failed to index document: ${error}`);
       throw error;
     }
   }
@@ -230,10 +230,10 @@ class DocumentIndexEngine {
       // Sort by relevance
       results.sort((a, b) => b.relevanceScore - a.relevanceScore);
 
-      console.log(`✓ Found ${results.length} documents matching query`);
+      console.log(`âœ“ Found ${results.length} documents matching query`);
       return results;
     } catch (error) {
-      console.error(`✗ Search failed: ${error}`);
+      console.error(`âœ— Search failed: ${error}`);
       throw error;
     }
   }
@@ -250,13 +250,13 @@ class DocumentIndexEngine {
       const snapshot = await query.get();
 
       if (snapshot.empty) {
-        console.warn(`⚠ Document not found: ${documentId}`);
+        console.warn(`âš  Document not found: ${documentId}`);
         return null;
       }
 
       return snapshot.docs[0].data() as DocumentMetadata;
     } catch (error) {
-      console.error(`✗ Failed to retrieve metadata: ${error}`);
+      console.error(`âœ— Failed to retrieve metadata: ${error}`);
       throw error;
     }
   }
@@ -291,9 +291,9 @@ class DocumentIndexEngine {
       // Log audit entry
       await this.logAuditEntry(documentId, 'METADATA_UPDATED', 'system', updates);
 
-      console.log(`✓ Metadata updated: ${documentId}`);
+      console.log(`âœ“ Metadata updated: ${documentId}`);
     } catch (error) {
-      console.error(`✗ Failed to update metadata: ${error}`);
+      console.error(`âœ— Failed to update metadata: ${error}`);
       throw error;
     }
   }
@@ -312,10 +312,10 @@ class DocumentIndexEngine {
 
       const versions = snapshot.docs.map(doc => doc.data() as DocumentMetadata);
 
-      console.log(`✓ Retrieved ${versions.length} versions for ${classification}`);
+      console.log(`âœ“ Retrieved ${versions.length} versions for ${classification}`);
       return versions;
     } catch (error) {
-      console.error(`✗ Failed to retrieve versions: ${error}`);
+      console.error(`âœ— Failed to retrieve versions: ${error}`);
       throw error;
     }
   }
@@ -344,7 +344,7 @@ class DocumentIndexEngine {
 
       await table.insert(row);
     } catch (error) {
-      console.error(`⚠ Failed to add to BigQuery: ${error}`);
+      console.error(`âš  Failed to add to BigQuery: ${error}`);
     }
   }
 
@@ -366,7 +366,7 @@ class DocumentIndexEngine {
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      console.error(`⚠ Failed to log audit entry: ${error}`);
+      console.error(`âš  Failed to log audit entry: ${error}`);
     }
   }
 
@@ -388,7 +388,7 @@ class DocumentIndexEngine {
         details: doc.data().details,
       }));
     } catch (error) {
-      console.error(`✗ Failed to retrieve audit trail: ${error}`);
+      console.error(`âœ— Failed to retrieve audit trail: ${error}`);
       throw error;
     }
   }
@@ -405,9 +405,9 @@ class DocumentIndexEngine {
 
       await this.logAuditEntry(documentId, 'ARCHIVED', 'system', {});
 
-      console.log(`✓ Document archived: ${documentId}`);
+      console.log(`âœ“ Document archived: ${documentId}`);
     } catch (error) {
-      console.error(`✗ Failed to archive document: ${error}`);
+      console.error(`âœ— Failed to archive document: ${error}`);
       throw error;
     }
   }
@@ -440,7 +440,7 @@ class DocumentIndexEngine {
         totalSize: rows.reduce((sum: number, row: any) => sum + row.total_size, 0),
       };
     } catch (error) {
-      console.error(`✗ Failed to generate report: ${error}`);
+      console.error(`âœ— Failed to generate report: ${error}`);
       throw error;
     }
   }

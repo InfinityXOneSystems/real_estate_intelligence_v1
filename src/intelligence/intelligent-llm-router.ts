@@ -1,12 +1,12 @@
 /**
  * Intelligent LLM Router - Multi-Model Orchestration
- * 
+ *
  * Routes requests to optimal AI model:
  * - Claude 3.5 Sonnet (primary - best reasoning)
  * - Google Gemini 2.0 (multimodal - documents, images)
  * - Vertex AI (GCP-native, lowest latency)
  * - Fallback chain for resilience
- * 
+ *
  * @package intelligence
  * @author JARVIS
  * @version 1.0.0
@@ -80,7 +80,10 @@ export class IntelligentLLMRouter extends EventEmitter {
   private anthropic: Anthropic;
   private gemini: GoogleGenerativeAI;
   private vertexAI: VertexAI;
-  private modelStats: Map<string, { successes: number; failures: number; avgLatency: number }> = new Map();
+  private modelStats: Map<
+    string,
+    { successes: number; failures: number; avgLatency: number }
+  > = new Map();
 
   private models: ModelConfig[] = [
     {
@@ -183,15 +186,27 @@ export class IntelligentLLMRouter extends EventEmitter {
     // Route based on request type
     switch (request.type) {
       case 'multimodal':
-        return available.find((m) => m.capabilities.includes('multimodal')) || available[0];
+        return (
+          available.find((m) => m.capabilities.includes('multimodal')) ||
+          available[0]
+        );
       case 'fast':
         return available.sort((a, b) => a.latencyMs - b.latencyMs)[0];
       case 'reasoning':
-        return available.find((m) => m.capabilities.includes('reasoning')) || available[0];
+        return (
+          available.find((m) => m.capabilities.includes('reasoning')) ||
+          available[0]
+        );
       case 'analysis':
-        return available.find((m) => m.capabilities.includes('analysis')) || available[0];
+        return (
+          available.find((m) => m.capabilities.includes('analysis')) ||
+          available[0]
+        );
       case 'creative':
-        return available.find((m) => m.capabilities.includes('writing')) || available[0];
+        return (
+          available.find((m) => m.capabilities.includes('writing')) ||
+          available[0]
+        );
       default:
         return available[0];
     }
@@ -218,12 +233,15 @@ export class IntelligentLLMRouter extends EventEmitter {
       });
 
       const latency = Date.now() - startTime;
-      const tokensUsed = (response.usage?.input_tokens || 0) + (response.usage?.output_tokens || 0);
+      const tokensUsed =
+        (response.usage?.input_tokens || 0) +
+        (response.usage?.output_tokens || 0);
 
       this.recordSuccess('claude-3-5-sonnet', latency);
 
       return {
-        content: response.content[0].type === 'text' ? response.content[0].text : '',
+        content:
+          response.content[0].type === 'text' ? response.content[0].text : '',
         model: 'claude-3-5-sonnet',
         tokensUsed,
         latency,
@@ -262,7 +280,12 @@ export class IntelligentLLMRouter extends EventEmitter {
       }
 
       const response = await model.generateContent({
-        contents: [{ role: 'user', parts: Array.isArray(content) ? content : [{ text: content }] }],
+        contents: [
+          {
+            role: 'user',
+            parts: Array.isArray(content) ? content : [{ text: content }],
+          },
+        ],
       });
 
       const latency = Date.now() - startTime;
@@ -305,7 +328,8 @@ export class IntelligentLLMRouter extends EventEmitter {
       });
 
       const latency = Date.now() - startTime;
-      const text = response.response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const text =
+        response.response.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
       this.recordSuccess('vertex-ai', latency);
 
@@ -367,7 +391,9 @@ export class IntelligentLLMRouter extends EventEmitter {
         this.emit('request:complete', response);
         return response;
       } catch (error) {
-        logger.warn(`Model ${model.name} failed, trying next`, { error: (error as Error).message });
+        logger.warn(`Model ${model.name} failed, trying next`, {
+          error: (error as Error).message,
+        });
         continue;
       }
     }
@@ -430,7 +456,8 @@ Provide analysis that is:
     this.modelStats.forEach((value, key) => {
       const total = value.successes + value.failures;
       stats[key] = {
-        successRate: total > 0 ? (value.successes / total * 100).toFixed(1) : 'N/A',
+        successRate:
+          total > 0 ? ((value.successes / total) * 100).toFixed(1) : 'N/A',
         totalRequests: total,
         avgLatency: value.avgLatency.toFixed(0) + 'ms',
       };

@@ -1,8 +1,8 @@
 /**
  * RAG Memory Categories & Subcategories Configuration
- * 
+ *
  * Defines how memory is organized and retrieved for different scenarios
- * 
+ *
  * @package config
  * @author JARVIS
  * @version 1.0.0
@@ -32,7 +32,8 @@ export const RAG_MEMORY_CATEGORIES: RAGConfiguration = {
   // ============================================================================
   sellerPsychology: {
     name: 'Seller Psychology & Behavioral Patterns',
-    description: 'Historical patterns of seller behavior, emotional responses, and decision-making patterns',
+    description:
+      'Historical patterns of seller behavior, emotional responses, and decision-making patterns',
     subcategories: [
       'divorce-situations',
       'foreclosure-situations',
@@ -58,7 +59,8 @@ export const RAG_MEMORY_CATEGORIES: RAGConfiguration = {
   // ============================================================================
   negotiationStrategies: {
     name: 'Negotiation Strategies & Tactics',
-    description: 'Successful negotiation approaches, price anchoring, and persuasion techniques',
+    description:
+      'Successful negotiation approaches, price anchoring, and persuasion techniques',
     subcategories: [
       'opening-offers',
       'counter-offer-responses',
@@ -86,7 +88,8 @@ export const RAG_MEMORY_CATEGORIES: RAGConfiguration = {
   // ============================================================================
   marketConditions: {
     name: 'Market Conditions & Trends',
-    description: 'Historical market data, price trends, and economic indicators by geography',
+    description:
+      'Historical market data, price trends, and economic indicators by geography',
     subcategories: [
       'zipcode-trends',
       'county-trends',
@@ -116,7 +119,8 @@ export const RAG_MEMORY_CATEGORIES: RAGConfiguration = {
   // ============================================================================
   agentPerformance: {
     name: 'Agent Performance & Specializations',
-    description: 'Agent success rates, specializations, strengths, and performance metrics',
+    description:
+      'Agent success rates, specializations, strengths, and performance metrics',
     subcategories: [
       'top-performers',
       'divorce-specialists',
@@ -130,7 +134,7 @@ export const RAG_MEMORY_CATEGORIES: RAGConfiguration = {
     retrievalPrompts: [
       'Who are the top performing agents?',
       'Which agent specializes in this situation?',
-      'What is this agent\'s success rate?',
+      "What is this agent's success rate?",
       'What is their average negotiation time?',
       'What are their client satisfaction scores?',
       'What unique approaches do they use?',
@@ -146,7 +150,8 @@ export const RAG_MEMORY_CATEGORIES: RAGConfiguration = {
   // ============================================================================
   successfulOutcomes: {
     name: 'Successful Outcomes & Case Studies',
-    description: 'Detailed documentation of successful deals, strategies used, and results achieved',
+    description:
+      'Detailed documentation of successful deals, strategies used, and results achieved',
     subcategories: [
       'successful-negotiations',
       'difficult-seller-wins',
@@ -175,7 +180,8 @@ export const RAG_MEMORY_CATEGORIES: RAGConfiguration = {
   // ============================================================================
   failedOutcomes: {
     name: 'Failed Outcomes & Lessons Learned',
-    description: 'Documented failures, mistakes, and lessons learned to avoid similar pitfalls',
+    description:
+      'Documented failures, mistakes, and lessons learned to avoid similar pitfalls',
     subcategories: [
       'failed-negotiations',
       'missed-opportunities',
@@ -203,7 +209,8 @@ export const RAG_MEMORY_CATEGORIES: RAGConfiguration = {
   // ============================================================================
   propertyInvestment: {
     name: 'Property Investment Analysis',
-    description: 'Investment potential, return estimates, renovation costs, and market demand',
+    description:
+      'Investment potential, return estimates, renovation costs, and market demand',
     subcategories: [
       'investment-potential',
       'renovation-estimates',
@@ -232,7 +239,8 @@ export const RAG_MEMORY_CATEGORIES: RAGConfiguration = {
   // ============================================================================
   distressPatterns: {
     name: 'Distress Property Patterns',
-    description: 'Patterns in distressed properties, timelines, and buyer behavior',
+    description:
+      'Patterns in distressed properties, timelines, and buyer behavior',
     subcategories: [
       'foreclosure-timelines',
       'bankruptcy-patterns',
@@ -260,7 +268,8 @@ export const RAG_MEMORY_CATEGORIES: RAGConfiguration = {
   // ============================================================================
   communicationPatterns: {
     name: 'Communication Patterns & Techniques',
-    description: 'Effective communication methods, language patterns, and messaging that resonates',
+    description:
+      'Effective communication methods, language patterns, and messaging that resonates',
     subcategories: [
       'emotional-messaging',
       'urgency-messaging',
@@ -289,7 +298,8 @@ export const RAG_MEMORY_CATEGORIES: RAGConfiguration = {
   // ============================================================================
   teamCoordination: {
     name: 'Team Coordination & Collaboration',
-    description: 'Multi-agent collaboration patterns, hand-off procedures, and escalation paths',
+    description:
+      'Multi-agent collaboration patterns, hand-off procedures, and escalation paths',
     subcategories: [
       'multi-agent-deals',
       'agent-specialization-handoffs',
@@ -350,21 +360,24 @@ export const COMMON_RAG_QUERIES = {
   // Seller Assessment
   sellerAssessment: {
     category: 'sellerPsychology',
-    query: 'What behavioral patterns and emotional states characterized sellers in similar situations?',
+    query:
+      'What behavioral patterns and emotional states characterized sellers in similar situations?',
     context: 'situation',
   },
 
   // Negotiation Planning
   negotiationPlanning: {
     category: 'negotiationStrategies',
-    query: 'What negotiation strategies and price anchoring techniques were most successful?',
+    query:
+      'What negotiation strategies and price anchoring techniques were most successful?',
     context: ['situation', 'location'],
   },
 
   // Market Analysis
   marketAnalysis: {
     category: 'marketConditions',
-    query: 'What are the current market conditions and historical trends for this area?',
+    query:
+      'What are the current market conditions and historical trends for this area?',
     context: 'zipCode',
   },
 
@@ -385,7 +398,8 @@ export const COMMON_RAG_QUERIES = {
   // Risk Assessment
   riskAssessment: {
     category: 'riskAssessment',
-    query: 'What are the potential risks and how have they been mitigated in the past?',
+    query:
+      'What are the potential risks and how have they been mitigated in the past?',
     context: ['situation', 'properties'],
   },
 };
@@ -416,7 +430,10 @@ export const VALID_CATEGORIES = Object.keys(RAG_MEMORY_CATEGORIES) as Array<
  */
 
 export function getRAGCategory(categoryName: string): RAGCategory | null {
-  return RAG_MEMORY_CATEGORIES[categoryName as keyof typeof RAG_MEMORY_CATEGORIES] || null;
+  return (
+    RAG_MEMORY_CATEGORIES[categoryName as keyof typeof RAG_MEMORY_CATEGORIES] ||
+    null
+  );
 }
 
 /**

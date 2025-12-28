@@ -1,13 +1,13 @@
 /**
  * Google Cloud Storage Persistence Layer
- * 
+ *
  * Manages all file operations in GCS bucket:
  * - Transaction history archival
  * - Crawled data backup
  * - Report generation storage
  * - Training data management
  * - Audit trail logging
- * 
+ *
  * @package integrations
  * @author JARVIS
  * @version 1.0.0
@@ -115,7 +115,10 @@ export class GCSPersistence extends EventEmitter {
   /**
    * Upload transaction to archive
    */
-  async uploadTransaction(transactionId: string, data: Record<string, any>): Promise<GCSUploadResult> {
+  async uploadTransaction(
+    transactionId: string,
+    data: Record<string, any>
+  ): Promise<GCSUploadResult> {
     const fileName = `transactions/${new Date().getFullYear()}/${new Date().getMonth() + 1}/${transactionId}.json`;
     return this.uploadToGCS(fileName, JSON.stringify(data, null, 2), {
       contentType: 'application/json',
@@ -130,7 +133,10 @@ export class GCSPersistence extends EventEmitter {
   /**
    * Upload crawled data
    */
-  async uploadCrawledData(dataType: string, data: Record<string, any>): Promise<GCSUploadResult> {
+  async uploadCrawledData(
+    dataType: string,
+    data: Record<string, any>
+  ): Promise<GCSUploadResult> {
     const timestamp = new Date().toISOString().split('T')[0];
     const fileName = `crawled-data/${dataType}/${timestamp}/${Date.now()}.json`;
     return this.uploadToGCS(fileName, JSON.stringify(data, null, 2), {
@@ -146,10 +152,16 @@ export class GCSPersistence extends EventEmitter {
   /**
    * Upload report
    */
-  async uploadReport(reportType: string, reportName: string, content: string): Promise<GCSUploadResult> {
+  async uploadReport(
+    reportType: string,
+    reportName: string,
+    content: string
+  ): Promise<GCSUploadResult> {
     const timestamp = new Date().toISOString().split('T')[0];
     const fileName = `reports/${reportType}/${timestamp}/${reportName}`;
-    const contentType = reportName.endsWith('.pdf') ? 'application/pdf' : 'text/plain';
+    const contentType = reportName.endsWith('.pdf')
+      ? 'application/pdf'
+      : 'text/plain';
 
     return this.uploadToGCS(fileName, content, {
       contentType,
@@ -165,7 +177,10 @@ export class GCSPersistence extends EventEmitter {
   /**
    * Upload training data
    */
-  async uploadTrainingData(datasetName: string, data: any[]): Promise<GCSUploadResult> {
+  async uploadTrainingData(
+    datasetName: string,
+    data: any[]
+  ): Promise<GCSUploadResult> {
     const fileName = `training-data/${datasetName}/${Date.now()}.jsonl`;
     const content = data.map((d) => JSON.stringify(d)).join('\n');
 
@@ -183,7 +198,10 @@ export class GCSPersistence extends EventEmitter {
   /**
    * Upload audit log
    */
-  async uploadAuditLog(logType: string, logData: Record<string, any>): Promise<GCSUploadResult> {
+  async uploadAuditLog(
+    logType: string,
+    logData: Record<string, any>
+  ): Promise<GCSUploadResult> {
     const fileName = `audit-logs/${logType}/${new Date().toISOString().split('T')[0]}/${Date.now()}.json`;
     return this.uploadToGCS(fileName, JSON.stringify(logData, null, 2), {
       contentType: 'application/json',
@@ -216,7 +234,8 @@ export class GCSPersistence extends EventEmitter {
     };
 
     try {
-      const buffer = typeof content === 'string' ? Buffer.from(content) : content;
+      const buffer =
+        typeof content === 'string' ? Buffer.from(content) : content;
       await file.save(buffer, uploadOptions);
 
       const [metadata] = await file.getMetadata();
@@ -358,7 +377,8 @@ export class GCSPersistence extends EventEmitter {
         stats.totalSize += parseInt(metadata.size, 10);
 
         const contentType = metadata.contentType || 'unknown';
-        stats.filesByType[contentType] = (stats.filesByType[contentType] || 0) + 1;
+        stats.filesByType[contentType] =
+          (stats.filesByType[contentType] || 0) + 1;
 
         const updated = new Date(metadata.updated);
         if (!stats.oldestFile || updated < stats.oldestFile) {
